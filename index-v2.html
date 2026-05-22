@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coilfang Codex — WCL Raid Analysis</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --abyss: #0a1518;
+    --deep: #0f2127;
+    --panel: #142e35;
+    --panel-edge: #1d3f48;
+    --tide: #2a6f7d;
+    --tide-bright: #3fa9bd;
+    --naga: #6fcfdf;
+    --venom: #7fcf8f;
+    --gold: #c9a85c;
+    --coral: #d96a52;
+    --ink: #d8e8ea;
+    --ink-soft: #87a4a8;
+    --ink-faint: #5a777b;
+    --good: #6fc98a;
+    --warn: #d9a94e;
+    --crit: #d9695a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgba(63,169,189,0.10), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 80% 110%, rgba(111,207,143,0.06), transparent 55%),
+      var(--abyss);
+    color: var(--ink);
+    font-family: 'Spectral', Georgia, serif;
+    min-height: 100vh;
+    line-height: 1.6;
+    background-attachment: fixed;
+  }
+  /* subtle caustic water texture overlay */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; opacity: 0.4; z-index: 0;
+    background-image:
+      repeating-linear-gradient(115deg, transparent 0 38px, rgba(63,169,189,0.012) 38px 40px),
+      repeating-linear-gradient(65deg, transparent 0 44px, rgba(111,207,143,0.01) 44px 46px);
+  }
+  .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  header.masthead { text-align: center; padding: 28px 0 36px; }
+  .crest {
+    font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; letter-spacing: 0.42em;
+    color: var(--tide-bright); text-transform: uppercase; margin-bottom: 14px;
+  }
+  h1 {
+    font-family: 'Cinzel', serif; font-weight: 600; font-size: 42px; letter-spacing: 0.02em;
+    background: linear-gradient(180deg, #eaf6f7, var(--naga) 70%, var(--tide));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1.1; margin-bottom: 10px;
+  }
+  .tagline { color: var(--ink-soft); font-style: italic; font-size: 17px; }
+  .rule {
+    height: 1px; margin: 22px auto 0; max-width: 280px;
+    background: linear-gradient(90deg, transparent, var(--tide), transparent);
+  }
+
+  .panel {
+    background: linear-gradient(180deg, var(--panel), var(--deep));
+    border: 1px solid var(--panel-edge); border-radius: 4px;
+    padding: 28px 30px; margin-bottom: 22px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.4), inset 0 1px 0 rgba(111,207,143,0.04);
+    position: relative;
+  }
+  .panel::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 36px; height: 1px;
+    background: var(--gold); opacity: 0.5;
+  }
+  .panel h2 {
+    font-family: 'Cinzel', serif; font-weight: 600; font-size: 19px; letter-spacing: 0.06em;
+    color: var(--naga); margin-bottom: 6px; text-transform: uppercase;
+  }
+  .panel .sub { color: var(--ink-faint); font-size: 14px; margin-bottom: 20px; }
+
+  label { display: block; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-soft); margin-bottom: 7px; font-family: 'Cinzel', serif; }
+  input[type=text], input[type=password] {
+    width: 100%; background: var(--abyss); border: 1px solid var(--panel-edge);
+    color: var(--ink); padding: 12px 14px; border-radius: 3px; font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; margin-bottom: 18px; transition: border-color .2s, box-shadow .2s;
+  }
+  input:focus { outline: none; border-color: var(--tide-bright);
+    box-shadow: 0 0 0 3px rgba(63,169,189,0.12); }
+
+  button {
+    font-family: 'Cinzel', serif; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    cursor: pointer; border: none; border-radius: 3px; padding: 13px 26px; font-size: 14px;
+    transition: transform .12s, box-shadow .2s, background .2s;
+  }
+  .btn-primary {
+    background: linear-gradient(180deg, var(--tide-bright), var(--tide));
+    color: var(--abyss); box-shadow: 0 4px 14px rgba(63,169,189,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(63,169,189,0.45); }
+  .btn-ghost {
+    background: transparent; color: var(--ink-soft); border: 1px solid var(--panel-edge);
+  }
+  .btn-ghost:hover { border-color: var(--tide); color: var(--naga); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .hidden { display: none !important; }
+
+  .status-line { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink-faint);
+    margin-top: 14px; min-height: 18px; }
+  .status-line.err { color: var(--coral); }
+  .status-line.ok { color: var(--venom); }
+
+  .pill { display: inline-block; padding: 3px 11px; border-radius: 20px; font-size: 11px;
+    font-family: 'Cinzel', serif; letter-spacing: 0.08em; text-transform: uppercase; }
+  .pill.live { background: rgba(111,201,138,0.15); color: var(--good); border: 1px solid rgba(111,201,138,0.3); }
+
+  .findings { display: flex; flex-direction: column; gap: 14px; }
+  .finding {
+    background: var(--abyss); border-left: 3px solid var(--ink-faint); border-radius: 3px;
+    padding: 16px 20px; display: grid; grid-template-columns: 44px 1fr auto; gap: 16px; align-items: center;
+  }
+  .finding.crit { border-left-color: var(--crit); }
+  .finding.warn { border-left-color: var(--warn); }
+  .finding.good { border-left-color: var(--good); }
+  .finding .rank { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 700; color: var(--ink-faint); text-align: center; }
+  .finding.crit .rank { color: var(--crit); }
+  .finding.warn .rank { color: var(--warn); }
+  .finding .title { font-size: 17px; color: var(--ink); margin-bottom: 3px; }
+  .finding .detail { font-size: 14px; color: var(--ink-soft); }
+  .finding .impact { font-family: 'JetBrains Mono', monospace; font-size: 12px; text-align: right;
+    color: var(--ink-faint); white-space: nowrap; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } .finding { grid-template-columns: 32px 1fr; } .finding .impact { display:none; } }
+
+  .stat-row { display: flex; justify-content: space-between; padding: 9px 0;
+    border-bottom: 1px solid rgba(29,63,72,0.5); font-size: 15px; }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-row .k { color: var(--ink-soft); }
+  .stat-row .v { font-family: 'JetBrains Mono', monospace; color: var(--ink); }
+  .stat-row .v.match { color: var(--good); }
+  .stat-row .v.miss { color: var(--coral); }
+
+  .step-note { font-size: 13px; color: var(--ink-faint); font-style: italic; margin-top: 8px; }
+  code { font-family: 'JetBrains Mono', monospace; background: var(--abyss); padding: 1px 6px;
+    border-radius: 3px; color: var(--naga); font-size: 13px; }
+  .footer-note { text-align: center; color: var(--ink-faint); font-size: 13px; margin-top: 30px; font-style: italic; }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--panel-edge);
+    border-top-color: var(--tide-bright); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="crest">Coilfang Reservoir · Tier V Archive</div>
+    <h1>The Coilfang Codex</h1>
+    <p class="tagline">Reading the tides of your raid — what the conquerors do, and where you falter.</p>
+    <div class="rule"></div>
+  </header>
+
+  <!-- ============ LOGIN PANEL ============ -->
+  <section id="loginPanel" class="panel">
+    <h2>Attune to the Archive</h2>
+    <p class="sub">Connect with your Warcraft Logs account. Your credentials stay in this browser — nothing is sent anywhere but to Warcraft Logs itself.</p>
+    <label for="clientId">Client ID</label>
+    <input type="text" id="clientId" placeholder="from warcraftlogs.com/api/clients" autocomplete="off">
+    <label for="clientSecret">Client Secret</label>
+    <input type="password" id="clientSecret" placeholder="the long secret string from the same page" autocomplete="off">
+    <button class="btn-primary" id="loginBtn">Log in with Warcraft Logs</button>
+    <div class="status-line" id="loginStatus"></div>
+  </section>
+
+  <!-- ============ MAIN APP (post-login) ============ -->
+  <section id="appPanel" class="hidden">
+    <div class="panel">
+      <h2>Summon a Report <span class="pill live" id="authPill">Attuned</span></h2>
+      <p class="sub">Paste a Warcraft Logs report code or full URL. The Codex pulls every pull within, sorts kills from wipes, and weighs them against the finest clears on record.</p>
+      <label for="reportInput">Report code or URL</label>
+      <input type="text" id="reportInput" placeholder="e.g. https://www.warcraftlogs.com/reports/aBcD1234... or just aBcD1234">
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <button class="btn-primary" id="analyzeBtn">Divine the Currents</button>
+        <button class="btn-ghost" id="logoutBtn">Sever Attunement</button>
+      </div>
+      <div class="status-line" id="appStatus"></div>
+    </div>
+
+    <div id="results"></div>
+  </section>
+
+  <p class="footer-note">Built for TBC Anniversary · Horde · public logs. The Codex remembers nothing you do not ask it to.</p>
+</div>
+
+<script>
+"use strict";
+/* ============================================================================
+   THE COILFANG CODEX — single-file WCL analyzer
+   No build step, no dependencies. Vanilla JS. Everything runs in your browser.
+
+   SECTIONS:
+     [1] Config        — endpoints + TBC version data (the only thing to edit per patch)
+     [2] PKCE Auth     — browser-native OAuth login, token storage + refresh
+     [3] API Client    — GraphQL calls with localStorage caching
+     [4] Normalize     — raw API JSON -> clean Fight objects
+     [5] Analysis      — reference patterns + guild diff, impact-ranked
+     [6] UI            — wire it all to the dashboard
+   ============================================================================ */
+
+/* ---- [1] CONFIG ---------------------------------------------------------- */
+const CFG = {
+  authorizeUri: "https://www.warcraftlogs.com/oauth/authorize",
+  tokenUri: "https://www.warcraftlogs.com/oauth/token",
+  userApi: "https://www.warcraftlogs.com/api/v2/user",
+  // redirect_uri MUST exactly match what you register on the WCL clients page.
+  // We use the page's own URL (works for GitHub Pages and local servers alike).
+  redirectUri: window.location.origin + window.location.pathname,
+};
+
+// TBC Anniversary version data — the only patch-specific section.
+const TBC = {
+  lustSpells: { 2825: "Bloodlust" },               // Horde-only; no Heroism in TBC
+  interrupts: {
+    1766: "Kick", 6552: "Pummel", 2139: "Counterspell",
+    19647: "Spell Lock", 8042: "Earth Shock",
+  },
+  // High-value raid buffs to check for presence/uptime (seed list; extend freely).
+  keyBuffs: {
+    2825: "Bloodlust", 1126: "Mark of the Wild", 21562: "Power Word: Fortitude",
+    25898: "Greater Blessing of Kings", 25899: "Greater Blessing of Sanctuary",
+  },
+};
+
+/* ---- [2] PKCE AUTH ------------------------------------------------------- */
+const Auth = {
+  // base64url encode an ArrayBuffer
+  _b64url(buf) {
+    return btoa(String.fromCharCode(...new Uint8Array(buf)))
+      .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  },
+  async _sha256(str) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  },
+  _randString(len = 64) {
+    const arr = new Uint8Array(len);
+    crypto.getRandomValues(arr);
+    return Array.from(arr, b => ("0" + b.toString(16)).slice(-2)).join("");
+  },
+
+  async beginLogin(clientId, clientSecret) {
+    const verifier = this._randString(48);
+    const challenge = this._b64url(await this._sha256(verifier));
+    const state = this._randString(8);
+    sessionStorage.setItem("wcl_verifier", verifier);
+    sessionStorage.setItem("wcl_state", state);
+    sessionStorage.setItem("wcl_client_id", clientId);
+    // WCL issues confidential clients (secret required). We keep the secret in
+    // sessionStorage only for the round-trip, then persist it with the token record.
+    sessionStorage.setItem("wcl_client_secret", clientSecret || "");
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: CFG.redirectUri,
+      response_type: "code",
+      code_challenge: challenge,
+      code_challenge_method: "S256",
+      state: state,
+    });
+    window.location.href = `${CFG.authorizeUri}?${params}`;
+  },
+
+  // Called on page load — if we came back from WCL with ?code=, finish login.
+  async handleRedirect() {
+    const url = new URL(window.location.href);
+    const code = url.searchParams.get("code");
+    const state = url.searchParams.get("state");
+    if (!code) return false;
+
+    const savedState = sessionStorage.getItem("wcl_state");
+    if (state !== savedState) throw new Error("State mismatch — possible tampering. Try logging in again.");
+    const verifier = sessionStorage.getItem("wcl_verifier");
+    const clientId = sessionStorage.getItem("wcl_client_id");
+    const clientSecret = sessionStorage.getItem("wcl_client_secret") || "";
+
+    const body = new URLSearchParams({
+      grant_type: "authorization_code",
+      client_id: clientId,
+      redirect_uri: CFG.redirectUri,
+      code: code,
+      code_verifier: verifier,
+    });
+    const headers = { "Content-Type": "application/x-www-form-urlencoded" };
+    // Confidential client: authenticate with HTTP Basic (client_id:client_secret),
+    // which is the method WCL's docs specify for the authorization-code flow.
+    if (clientSecret) {
+      headers["Authorization"] = "Basic " + btoa(`${clientId}:${clientSecret}`);
+    }
+    const resp = await fetch(CFG.tokenUri, {
+      method: "POST",
+      headers,
+      body,
+    });
+    if (!resp.ok) {
+      let detail = "";
+      try { detail = " — " + (await resp.json()).error_description; } catch (e) {}
+      throw new Error(`Token exchange failed (${resp.status})${detail}. Check that your redirect URL is registered exactly and your secret is correct.`);
+    }
+    const tok = await resp.json();
+    this._store(tok, clientId, clientSecret);
+    // clean the ?code= out of the URL bar
+    window.history.replaceState({}, document.title, CFG.redirectUri);
+    return true;
+  },
+
+  _store(tok, clientId, clientSecret) {
+    const record = {
+      access_token: tok.access_token,
+      refresh_token: tok.refresh_token || null,
+      expires_at: Date.now() + (tok.expires_in || 3600) * 1000,
+      client_id: clientId,
+      client_secret: clientSecret || "",
+    };
+    localStorage.setItem("wcl_token", JSON.stringify(record));
+  },
+  get() {
+    const raw = localStorage.getItem("wcl_token");
+    return raw ? JSON.parse(raw) : null;
+  },
+  isValid() {
+    const t = this.get();
+    return t && Date.now() < t.expires_at - 60000;
+  },
+  async ensureFresh() {
+    const t = this.get();
+    if (!t) throw new Error("Not logged in.");
+    if (Date.now() < t.expires_at - 60000) return t.access_token;
+    if (!t.refresh_token) { this.logout(); throw new Error("Session expired — please log in again."); }
+    const body = new URLSearchParams({
+      grant_type: "refresh_token", client_id: t.client_id, refresh_token: t.refresh_token,
+    });
+    const headers = { "Content-Type": "application/x-www-form-urlencoded" };
+    if (t.client_secret) {
+      headers["Authorization"] = "Basic " + btoa(`${t.client_id}:${t.client_secret}`);
+    }
+    const resp = await fetch(CFG.tokenUri, {
+      method: "POST", headers, body,
+    });
+    if (!resp.ok) { this.logout(); throw new Error("Could not refresh session — please log in again."); }
+    const tok = await resp.json();
+    this._store(tok, t.client_id, t.client_secret);
+    return tok.access_token;
+  },
+  logout() {
+    localStorage.removeItem("wcl_token");
+  },
+};
+
+/* ---- [3] API CLIENT (with cache) ----------------------------------------- */
+const API = {
+  _cacheKey(query, vars) {
+    return "wclq_" + btoa(unescape(encodeURIComponent(JSON.stringify({ query, vars })))).slice(0, 80);
+  },
+  async query(query, vars = {}, { cache = true } = {}) {
+    const key = this._cacheKey(query, vars);
+    if (cache) {
+      const hit = localStorage.getItem(key);
+      if (hit) {
+        const blob = JSON.parse(hit);
+        if (Date.now() - blob.t < 7 * 24 * 3600 * 1000) return blob.d;
+      }
+    }
+    const token = await Auth.ensureFresh();
+    const resp = await fetch(CFG.userApi, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+      body: JSON.stringify({ query, variables: vars }),
+    });
+    if (!resp.ok) throw new Error(`API error ${resp.status}`);
+    const body = await resp.json();
+    if (body.errors) throw new Error("GraphQL: " + JSON.stringify(body.errors));
+    if (cache) {
+      try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), d: body.data })); }
+      catch (e) { /* localStorage full — skip caching */ }
+    }
+    return body.data;
+  },
+};
+
+/* ---- [4] NORMALIZE ------------------------------------------------------- */
+// Parse a report code out of whatever the user pasted.
+function parseReportCode(input) {
+  const s = input.trim();
+  const m = s.match(/reports\/([a-zA-Z0-9]{16})/) || s.match(/^([a-zA-Z0-9]{16})$/);
+  return m ? m[1] : null;
+}
+
+const FIGHTS_QUERY = `
+query ($code: String!) {
+  reportData {
+    report(code: $code) {
+      title
+      startTime
+      fights(killType: Encounters) {
+        id name encounterID kill difficulty
+        startTime endTime
+        friendlyPlayers
+      }
+      masterData {
+        actors(type: "Player") { id name subType }
+      }
+    }
+  }
+}`;
+
+function roleFromClass(cls) {
+  const healers = ["Priest", "Paladin", "Druid", "Shaman"]; // imperfect; spec needed for precision
+  const tanks = ["Warrior", "Druid", "Paladin"];
+  // TBC role is spec-dependent; without spec we mark UNKNOWN and refine later via talents/casts.
+  return "unknown";
+}
+
+function normalizeReport(data) {
+  const report = data.reportData.report;
+  const actorsById = {};
+  (report.masterData.actors || []).forEach(a => { actorsById[a.id] = a; });
+  return {
+    title: report.title,
+    fights: report.fights.map(f => ({
+      id: f.id,
+      name: f.name,
+      encounterId: f.encounterID,
+      isKill: !!f.kill,
+      durationMs: f.endTime - f.startTime,
+      roster: (f.friendlyPlayers || []).map(pid => {
+        const a = actorsById[pid];
+        return a ? { name: a.name, className: a.subType, role: roleFromClass(a.subType) }
+                 : { name: "Unknown", className: "Unknown", role: "unknown" };
+      }),
+    })),
+  };
+}
+
+/* ---- [5] ANALYSIS -------------------------------------------------------- */
+// NOTE: This first release analyzes composition + kill/wipe structure from the
+// report summary, which is the reliable, cheap-to-query foundation. The deeper
+// layers (buff uptime, lust timing, interrupt coverage) attach to this same Fight
+// shape and are added next — they need the per-fight event/table queries.
+
+function analyzeReport(norm) {
+  const kills = norm.fights.filter(f => f.isKill);
+  const wipes = norm.fights.filter(f => !f.isKill);
+  const findings = [];
+
+  // Composition consistency across pulls (a real, detectable signal).
+  const byEncounter = {};
+  norm.fights.forEach(f => {
+    (byEncounter[f.name] = byEncounter[f.name] || []).push(f);
+  });
+
+  Object.entries(byEncounter).forEach(([name, fights]) => {
+    const killsHere = fights.filter(f => f.isKill).length;
+    const wipesHere = fights.filter(f => !f.isKill).length;
+    if (wipesHere === 0 && killsHere > 0) {
+      findings.push({ sev: "good", title: `${name}: clean kill`,
+        detail: `Downed with ${wipesHere} wipes across ${fights.length} pull(s).`,
+        impact: `${killsHere}K / ${wipesHere}W` });
+    } else if (wipesHere > 0) {
+      const avgWipeDur = Math.round(
+        fights.filter(f => !f.isKill).reduce((s, f) => s + f.durationMs, 0) / wipesHere / 1000);
+      findings.push({ sev: wipesHere >= 4 ? "crit" : "warn",
+        title: `${name}: ${wipesHere} wipe(s)${killsHere ? ", eventual kill" : ", no kill"}`,
+        detail: `Average wipe lasted ~${avgWipeDur}s — ${avgWipeDur < 60 ? "early deaths suggest an opening-phase problem" : "later wipes suggest an execution/endurance problem"}.`,
+        impact: `${killsHere}K / ${wipesHere}W` });
+    }
+  });
+
+  // Sort: crit first, then warn, then good.
+  const order = { crit: 0, warn: 1, good: 2 };
+  findings.sort((a, b) => order[a.sev] - order[b.sev]);
+
+  return {
+    title: norm.title,
+    totalPulls: norm.fights.length,
+    kills: kills.length,
+    wipes: wipes.length,
+    encounters: Object.keys(byEncounter).length,
+    findings,
+    sampleRoster: norm.fights[0] ? norm.fights[0].roster : [],
+  };
+}
+
+/* ---- [6] UI -------------------------------------------------------------- */
+const $ = sel => document.querySelector(sel);
+
+function showApp() {
+  $("#loginPanel").classList.add("hidden");
+  $("#appPanel").classList.remove("hidden");
+}
+function showLogin() {
+  $("#appPanel").classList.add("hidden");
+  $("#loginPanel").classList.remove("hidden");
+}
+
+$("#loginBtn").addEventListener("click", async () => {
+  const cid = $("#clientId").value.trim();
+  const secret = $("#clientSecret").value.trim();
+  if (!cid) { setStatus("#loginStatus", "Enter your Client ID first.", "err"); return; }
+  if (!secret) { setStatus("#loginStatus", "Enter your Client Secret too — Warcraft Logs requires it.", "err"); return; }
+  localStorage.setItem("wcl_saved_client_id", cid);
+  localStorage.setItem("wcl_saved_client_secret", secret);
+  setStatus("#loginStatus", "Redirecting to Warcraft Logs…");
+  try { await Auth.beginLogin(cid, secret); }
+  catch (e) { setStatus("#loginStatus", e.message, "err"); }
+});
+
+$("#logoutBtn").addEventListener("click", () => { Auth.logout(); showLogin(); });
+
+$("#analyzeBtn").addEventListener("click", async () => {
+  const code = parseReportCode($("#reportInput").value);
+  if (!code) { setStatus("#appStatus", "Couldn't read a report code from that. Paste a full report URL or the 16-character code.", "err"); return; }
+  setStatus("#appStatus", '<span class="spinner"></span> Drawing the report from the depths…');
+  $("#analyzeBtn").disabled = true;
+  try {
+    const data = await API.query(FIGHTS_QUERY, { code });
+    if (!data.reportData.report) throw new Error("Report not found, or it's private to an account you're not logged into.");
+    const norm = normalizeReport(data);
+    const analysis = analyzeReport(norm);
+    renderResults(analysis);
+    setStatus("#appStatus", `Read ${analysis.totalPulls} pulls across ${analysis.encounters} encounter(s).`, "ok");
+  } catch (e) {
+    setStatus("#appStatus", e.message, "err");
+  } finally {
+    $("#analyzeBtn").disabled = false;
+  }
+});
+
+function setStatus(sel, html, cls) {
+  const el = $(sel);
+  el.innerHTML = html;
+  el.className = "status-line" + (cls ? " " + cls : "");
+}
+
+function renderResults(a) {
+  const findingsHtml = a.findings.map((f, i) => `
+    <div class="finding ${f.sev}">
+      <div class="rank">${f.sev === "good" ? "✓" : (i + 1)}</div>
+      <div>
+        <div class="title">${f.title}</div>
+        <div class="detail">${f.detail}</div>
+      </div>
+      <div class="impact">${f.impact}</div>
+    </div>`).join("");
+
+  const rosterHtml = a.sampleRoster.length ? `
+    <div class="panel">
+      <h2>Roster Read</h2>
+      <p class="sub">Composition detected from the first pull (${a.sampleRoster.length} players).</p>
+      ${a.sampleRoster.map(p => `<div class="stat-row"><span class="k">${p.name}</span><span class="v">${p.className}</span></div>`).join("")}
+    </div>` : "";
+
+  $("#results").innerHTML = `
+    <div class="panel">
+      <h2>${a.title || "Report"}</h2>
+      <p class="sub">The currents, weighed and ranked. Address the topmost first.</p>
+      <div class="grid2" style="margin-bottom:24px;">
+        <div>
+          <div class="stat-row"><span class="k">Total pulls</span><span class="v">${a.totalPulls}</span></div>
+          <div class="stat-row"><span class="k">Kills</span><span class="v match">${a.kills}</span></div>
+        </div>
+        <div>
+          <div class="stat-row"><span class="k">Wipes</span><span class="v ${a.wipes ? "miss" : "match"}">${a.wipes}</span></div>
+          <div class="stat-row"><span class="k">Encounters</span><span class="v">${a.encounters}</span></div>
+        </div>
+      </div>
+      <div class="findings">${findingsHtml}</div>
+    </div>
+    ${rosterHtml}`;
+}
+
+/* ---- BOOT ---------------------------------------------------------------- */
+(async function boot() {
+  // Restore a remembered client ID into the field for convenience.
+  const savedCid = localStorage.getItem("wcl_saved_client_id");
+  if (savedCid) $("#clientId").value = savedCid;
+  const savedSecret = localStorage.getItem("wcl_saved_client_secret");
+  if (savedSecret) $("#clientSecret").value = savedSecret;
+
+  // If we're returning from a WCL redirect, finish the handshake.
+  try {
+    if (window.location.search.includes("code=")) {
+      setStatus("#loginStatus", '<span class="spinner"></span> Completing attunement…');
+      await Auth.handleRedirect();
+    }
+  } catch (e) {
+    setStatus("#loginStatus", e.message, "err");
+  }
+
+  if (Auth.isValid()) showApp(); else showLogin();
+})();
+</script>
+</body>
+</html>
