@@ -1,116 +1,356 @@
 {
-  "meta": {
-    "note": "Common Paladin macros adapted to WoW Forever's changes (Judgement no longer eats the Seal; Seal of Fury Judgement = taunt; Holy Strike baseline). Written for the Classic-era macro API: [@mouseover], [help]/[harm], [nodead], [mod:shift], /startattack, /stopcasting, /castsequence and 'Spell(Rank N)' all work. Max 255 characters per macro.",
-    "conventions": {
-      "mouseoverFallback": "[@mouseover,help,nodead][help,nodead][@player] = heal whatever is under the cursor (raid frames), else your friendly target, else yourself.",
-      "modifierRanks": "Shift = downranked/cheap version of the same button, so the key keeps one meaning across specs.",
-      "verify": "Items marked verify:true depend on behaviour not yet confirmed in the live Forever client."
-    }
+ "meta": {
+  "note": "Common Paladin macros adapted to WoW Forever's changes (Judgement no longer eats the Seal; Seal of Fury Judgement = taunt; Holy Strike baseline). Written for the Classic-era macro API: [@mouseover], [help]/[harm], [nodead], [mod:shift], /startattack, /stopcasting, /castsequence and 'Spell(Rank N)' all work. Max 255 characters per macro.",
+  "conventions": {
+   "mouseoverFallback": "[@mouseover,help,nodead][help,nodead][@player] = heal whatever is under the cursor (raid frames), else your friendly target, else yourself.",
+   "modifierRanks": "Shift = downranked/cheap version of the same button, so the key keeps one meaning across specs.",
+   "verify": "Items marked verify:true depend on behaviour not yet confirmed in the live Forever client.",
+   "covers": "covers = other spells/actions this macro also fires (counted as bound for coverage)."
+  }
+ },
+ "macros": [
+  {
+   "id": "m-flash",
+   "name": "Mouseover Flash of Light",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "flash-of-light",
+   "body": "#showtooltip Flash of Light\n/cast [@mouseover,help,nodead][help,nodead][@player] Flash of Light",
+   "why": "Core healer button. Works for off-spec emergency heals with no target swap."
   },
-  "macros": [
-    { "id": "m-flash", "name": "Mouseover Flash of Light", "roles": ["holy", "prot", "ret"], "replaces": "flash-of-light",
-      "body": "#showtooltip Flash of Light\n/cast [@mouseover,help,nodead][help,nodead][@player] Flash of Light",
-      "why": "Core healer button. Works for off-spec emergency heals with no target swap." },
-
-    { "id": "m-holylight", "name": "Mouseover Holy Light (shift = downrank)", "roles": ["holy", "prot", "ret"], "replaces": "holy-light",
-      "body": "#showtooltip Holy Light\n/cast [mod:shift,@mouseover,help,nodead][mod:shift,help,nodead][mod:shift,@player] Holy Light(Rank 5); [@mouseover,help,nodead][help,nodead][@player] Holy Light",
-      "why": "Downranking is the classic Holy Paladin mana tool. Adjust the rank number to taste." },
-
-    { "id": "m-holyshock", "name": "Smart Holy Shock (heal friend / hit enemy)", "roles": ["holy", "ret"], "replaces": "holy-shock",
-      "body": "#showtooltip Holy Shock\n/cast [@mouseover,help,nodead][@mouseover,harm,nodead][] Holy Shock",
-      "why": "One key for both Holy Shock modes; matters for Shockadin and Light's Vigil combos." },
-
-    { "id": "m-vigil", "name": "Mouseover Light's Vigil", "roles": ["holy"], "replaces": "lights-vigil",
-      "body": "#showtooltip Light's Vigil\n/cast [@mouseover,help,nodead][help,nodead][@player] Light's Vigil",
-      "why": "Pre-place Vigils on one member of each party, then chain Holy Shocks on them for raid-wide healing." },
-
-    { "id": "m-oath", "name": "Oath of Light on focus-or-mouseover", "roles": ["holy"], "replaces": "oath-of-light",
-      "body": "#showtooltip Oath of Light\n/cast [@mouseover,help,nodead][help,nodead][@targettarget,help] Oath of Light",
-      "why": "Swear the Oath on the tank. @targettarget lets you target the boss and still hit the tank." },
-
-    { "id": "m-favor", "name": "Divine Favor + Holy Light", "roles": ["holy"], "replaces": "divine-favor", "verify": true,
-      "body": "#showtooltip Divine Favor\n/cast Divine Favor\n/cast [@mouseover,help,nodead][help,nodead][@player] Holy Light",
-      "why": "Guaranteed crit big heal in one press. Only works if Divine Favor is off the global cooldown, as it is in Classic Era; otherwise press twice." },
-
-    { "id": "m-cleanse", "name": "Mouseover Cleanse", "roles": ["holy", "prot", "ret"], "replaces": "cleanse",
-      "body": "#showtooltip\n/cast [@mouseover,help,nodead][help,nodead][@player] Cleanse",
-      "why": "Below level 42 use Purify in the same macro / same key." },
-
-    { "id": "m-stopcast-heal", "name": "Stopcast + Flash of Light (snipe)", "roles": ["holy"], "verify": false,
-      "body": "#showtooltip Flash of Light\n/stopcasting\n/cast [@mouseover,help,nodead][help,nodead][@player] Flash of Light",
-      "why": "Cancels a Holy Light in progress to react quickly. Keep it on a separate key from the plain FoL." },
-
-    { "id": "m-judge-heal", "name": "Healer Judgement (shift = re-seal Wisdom)", "roles": ["holy"], "replaces": "judgement",
-      "body": "#showtooltip\n/cast [mod:shift] Seal of Wisdom; [@mouseover,harm,nodead][harm] Judgement",
-      "why": "Judgement no longer consumes the Seal in Forever, so keeping Judgement of Wisdom up is one button + an occasional reseal." },
-
-    { "id": "m-bop", "name": "Mouseover Blessing of Protection", "roles": ["holy", "prot", "ret"], "replaces": "blessing-of-protection",
-      "body": "#showtooltip\n/cast [@mouseover,help,nodead][help,nodead][@player] Blessing of Protection" },
-
-    { "id": "m-freedom", "name": "Mouseover Blessing of Freedom", "roles": ["holy", "prot", "ret"], "replaces": "blessing-of-freedom",
-      "body": "#showtooltip\n/cast [@mouseover,help,nodead][help,nodead][@player] Blessing of Freedom" },
-
-    { "id": "m-sac", "name": "Mouseover Blessing of Sacrifice", "roles": ["holy", "prot", "ret"], "replaces": "blessing-of-sacrifice",
-      "body": "#showtooltip\n/cast [@mouseover,help,nodead][help,nodead] Blessing of Sacrifice" },
-
-    { "id": "m-loh", "name": "Lay on Hands (shift = self)", "roles": ["holy", "prot", "ret"], "replaces": "lay-on-hands",
-      "body": "#showtooltip Lay on Hands\n/cast [mod:shift,@player][@mouseover,help,nodead][help,nodead][@player] Lay on Hands" },
-
-    { "id": "m-rez", "name": "Mouseover Redemption", "roles": ["holy", "prot", "ret"], "replaces": "redemption",
-      "body": "#showtooltip\n/cast [@mouseover,help,dead][help,dead] Redemption" },
-
-    { "id": "m-holystrike", "name": "Holy Strike + auto attack", "roles": ["holy", "prot", "ret"], "replaces": "holy-strike",
-      "body": "#showtooltip Holy Strike\n/startattack\n/cast Holy Strike",
-      "why": "Primary melee button for all specs; guarantees auto-attack is on." },
-
-    { "id": "m-hotr", "name": "Hammer of the Righteous + auto attack", "roles": ["prot", "ret"], "replaces": "hammer-of-the-righteous", "verify": true,
-      "body": "#showtooltip Hammer of the Righteous\n/startattack\n/cast Hammer of the Righteous",
-      "why": "Level 40 AoE strike (client data). Verify it is trainable in live." },
-
-    { "id": "m-judge-tank", "name": "Tank Judgement / taunt (mouseover)", "roles": ["prot", "ret"], "replaces": "judgement",
-      "body": "#showtooltip Judgement\n/startattack [harm,nodead]\n/cast [@mouseover,harm,nodead][harm,nodead] Judgement",
-      "why": "With Seal of Fury active this is the 10-yd taunt. Mouseover lets you taunt a loose add without dropping your target." },
-
-    { "id": "m-swift", "name": "Swift Judgement (backup taunt, mouseover)", "roles": ["prot"], "replaces": "swift-judgement",
-      "body": "#showtooltip Swift Judgement\n/cast [@mouseover,harm,nodead][harm,nodead] Swift Judgement",
-      "why": "Second Judgement on its own cooldown; covers a resisted taunt." },
-
-    { "id": "m-seal-main", "name": "Main Seal (spec-aware by modifier)", "roles": ["holy", "prot", "ret"],
-      "body": "#showtooltip\n/cast [mod:shift] Seal of Wisdom; [mod:ctrl] Seal of Light; Seal of Fury",
-      "why": "Template: one 'Seal' key that you edit per spec (Prot: Fury, Ret: Command, Holy: Wisdom). Same key, same meaning — 'put my seal up'." },
-
-    { "id": "m-seal-ret", "name": "Ret seal swap (Unsealed Wrath)", "roles": ["ret"],
-      "body": "#showtooltip\n/cast [mod:shift] Seal of Righteousness; Seal of Command",
-      "why": "Unsealed Wrath stores up to 3 copies of your active Seal; swapping Seals cashes them in. Two seals on one key makes the swap a single finger." },
-
-    { "id": "m-defensive", "name": "Defensive stack (Bulwark / Shield / Protection)", "roles": ["holy", "prot", "ret"],
-      "body": "#showtooltip\n/cast [mod:shift] Divine Protection; Divine Shield",
-      "why": "Prot edits this to: /cast [mod:shift] Divine Shield; Templar's Bulwark. All three share Forbearance, so keep them on one key + modifiers." },
-
-    { "id": "m-stoneform", "name": "Stoneform", "roles": ["holy", "prot", "ret"], "replaces": "stoneform",
-      "body": "#showtooltip Stoneform\n/cast Stoneform",
-      "why": "Self-cleanse of poison/disease/bleed + 10% physical reduction." },
-
-    { "id": "m-hoj", "name": "Mouseover Hammer of Justice", "roles": ["holy", "prot", "ret"], "replaces": "hammer-of-justice",
-      "body": "#showtooltip\n/cast [@mouseover,harm,nodead][harm,nodead] Hammer of Justice",
-      "why": "Paladins have no interrupt; HoJ is the stop-the-cast button." },
-
-    { "id": "m-repent", "name": "Mouseover Repentance", "roles": ["ret"], "replaces": "repentance",
-      "body": "#showtooltip\n/cast [@mouseover,harm,nodead][harm,nodead] Repentance" },
-
-    { "id": "m-potion", "name": "Healthstone (shift = potion)", "roles": ["holy", "prot", "ret"],
-      "body": "#showtooltip\n/use [mod:shift] Major Healing Potion; Major Healthstone",
-      "why": "Edit item names to whatever you carry at your level." },
-
-    { "id": "m-trinkets", "name": "Trinket 1 (shift = trinket 2)", "roles": ["holy", "prot", "ret"],
-      "body": "#showtooltip\n/use [mod:shift] 14; 13" },
-
-    { "id": "m-blessing", "name": "Smart Blessing (Greater with shift)", "roles": ["holy", "prot", "ret"],
-      "body": "#showtooltip\n/cast [mod:shift] Greater Blessing of Kings; Blessing of Kings",
-      "why": "Out-of-combat buff key. Swap Kings for Might/Wisdom as your raid assignment requires." },
-
-    { "id": "m-salv-cancel", "name": "Cancel Salvation (tanks)", "roles": ["prot"], "verify": true,
-      "body": "/cancelaura Salvation\n/cancelaura Mass Salvation",
-      "why": "Only relevant if Salvation/Mass Salvation exist live (Blizzard announced them; current client data doesn't list them)." }
-  ]
+  {
+   "id": "m-holylight",
+   "name": "Mouseover Holy Light (shift = downrank)",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "holy-light",
+   "body": "#showtooltip Holy Light\n/cast [mod:shift,@mouseover,help,nodead][mod:shift,help,nodead][mod:shift,@player] Holy Light(Rank 5); [@mouseover,help,nodead][help,nodead][@player] Holy Light",
+   "why": "Downranking is the classic Holy Paladin mana tool. Adjust the rank number to taste."
+  },
+  {
+   "id": "m-holyshock",
+   "name": "Smart Holy Shock (heal friend / hit enemy)",
+   "roles": [
+    "holy",
+    "ret"
+   ],
+   "replaces": "holy-shock",
+   "body": "#showtooltip Holy Shock\n/cast [@mouseover,help,nodead][@mouseover,harm,nodead][] Holy Shock",
+   "why": "One key for both Holy Shock modes; matters for Shockadin and Light's Vigil combos."
+  },
+  {
+   "id": "m-vigil",
+   "name": "Mouseover Light's Vigil",
+   "roles": [
+    "holy"
+   ],
+   "replaces": "lights-vigil",
+   "body": "#showtooltip Light's Vigil\n/cast [@mouseover,help,nodead][help,nodead][@player] Light's Vigil",
+   "why": "Pre-place Vigils on one member of each party, then chain Holy Shocks on them for raid-wide healing."
+  },
+  {
+   "id": "m-oath",
+   "name": "Oath of Light on focus-or-mouseover",
+   "roles": [
+    "holy"
+   ],
+   "replaces": "oath-of-light",
+   "body": "#showtooltip Oath of Light\n/cast [@mouseover,help,nodead][help,nodead][@targettarget,help] Oath of Light",
+   "why": "Swear the Oath on the tank. @targettarget lets you target the boss and still hit the tank."
+  },
+  {
+   "id": "m-favor",
+   "name": "Divine Favor + Holy Light",
+   "roles": [
+    "holy"
+   ],
+   "replaces": "divine-favor",
+   "verify": true,
+   "body": "#showtooltip Divine Favor\n/cast Divine Favor\n/cast [@mouseover,help,nodead][help,nodead][@player] Holy Light",
+   "why": "Guaranteed crit big heal in one press. Only works if Divine Favor is off the global cooldown, as it is in Classic Era; otherwise press twice."
+  },
+  {
+   "id": "m-cleanse",
+   "name": "Mouseover Cleanse",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "cleanse",
+   "body": "#showtooltip\n/cast [@mouseover,help,nodead][help,nodead][@player] Cleanse",
+   "why": "Below level 42 use Purify in the same macro / same key."
+  },
+  {
+   "id": "m-stopcast-heal",
+   "name": "Stopcast + Flash of Light (snipe)",
+   "roles": [
+    "holy"
+   ],
+   "verify": false,
+   "body": "#showtooltip Flash of Light\n/stopcasting\n/cast [@mouseover,help,nodead][help,nodead][@player] Flash of Light",
+   "why": "Cancels a Holy Light in progress to react quickly. Keep it on a separate key from the plain FoL.",
+   "covers": [
+    "stopcasting"
+   ]
+  },
+  {
+   "id": "m-judge-heal",
+   "name": "Healer Judgement (shift = re-seal Wisdom)",
+   "roles": [
+    "holy"
+   ],
+   "replaces": "judgement",
+   "body": "#showtooltip\n/cast [mod:shift] Seal of Wisdom; [@mouseover,harm,nodead][harm] Judgement",
+   "why": "Judgement no longer consumes the Seal in Forever, so keeping Judgement of Wisdom up is one button + an occasional reseal.",
+   "covers": [
+    "judgement",
+    "seal-of-wisdom"
+   ]
+  },
+  {
+   "id": "m-bop",
+   "name": "Mouseover Blessing of Protection",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "blessing-of-protection",
+   "body": "#showtooltip\n/cast [@mouseover,help,nodead][help,nodead][@player] Blessing of Protection"
+  },
+  {
+   "id": "m-freedom",
+   "name": "Mouseover Blessing of Freedom",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "blessing-of-freedom",
+   "body": "#showtooltip\n/cast [@mouseover,help,nodead][help,nodead][@player] Blessing of Freedom"
+  },
+  {
+   "id": "m-sac",
+   "name": "Mouseover Blessing of Sacrifice",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "blessing-of-sacrifice",
+   "body": "#showtooltip\n/cast [@mouseover,help,nodead][help,nodead] Blessing of Sacrifice",
+   "covers": [
+    "blessing-of-sacrifice"
+   ]
+  },
+  {
+   "id": "m-loh",
+   "name": "Lay on Hands (shift = self)",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "lay-on-hands",
+   "body": "#showtooltip Lay on Hands\n/cast [mod:shift,@player][@mouseover,help,nodead][help,nodead][@player] Lay on Hands"
+  },
+  {
+   "id": "m-rez",
+   "name": "Mouseover Redemption",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "redemption",
+   "body": "#showtooltip\n/cast [@mouseover,help,dead][help,dead] Redemption"
+  },
+  {
+   "id": "m-holystrike",
+   "name": "Holy Strike + auto attack",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "holy-strike",
+   "body": "#showtooltip Holy Strike\n/startattack\n/cast Holy Strike",
+   "why": "Primary melee button for all specs; guarantees auto-attack is on.",
+   "covers": [
+    "start-attack"
+   ]
+  },
+  {
+   "id": "m-hotr",
+   "name": "Hammer of the Righteous + auto attack",
+   "roles": [
+    "prot",
+    "ret"
+   ],
+   "replaces": "hammer-of-the-righteous",
+   "verify": true,
+   "body": "#showtooltip Hammer of the Righteous\n/startattack\n/cast Hammer of the Righteous",
+   "why": "Level 40 AoE strike (client data). Verify it is trainable in live.",
+   "covers": [
+    "start-attack"
+   ]
+  },
+  {
+   "id": "m-judge-tank",
+   "name": "Tank Judgement / taunt (mouseover)",
+   "roles": [
+    "prot",
+    "ret"
+   ],
+   "replaces": "judgement",
+   "body": "#showtooltip Judgement\n/startattack [harm,nodead]\n/cast [@mouseover,harm,nodead][harm,nodead] Judgement",
+   "why": "With Seal of Fury active this is the 10-yd taunt. Mouseover lets you taunt a loose add without dropping your target.",
+   "covers": [
+    "start-attack"
+   ]
+  },
+  {
+   "id": "m-swift",
+   "name": "Swift Judgement (backup taunt, mouseover)",
+   "roles": [
+    "prot"
+   ],
+   "replaces": "swift-judgement",
+   "body": "#showtooltip Swift Judgement\n/cast [@mouseover,harm,nodead][harm,nodead] Swift Judgement",
+   "why": "Second Judgement on its own cooldown; covers a resisted taunt."
+  },
+  {
+   "id": "m-seal-main",
+   "name": "Main Seal (spec-aware by modifier)",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "body": "#showtooltip\n/cast [mod:shift] Seal of Wisdom; [mod:ctrl] Seal of Light; Seal of Fury",
+   "why": "Template: one 'Seal' key that you edit per spec (Prot: Fury, Ret: Command, Holy: Wisdom). Same key, same meaning — 'put my seal up'."
+  },
+  {
+   "id": "m-seal-ret",
+   "name": "Ret seal swap (Unsealed Wrath)",
+   "roles": [
+    "ret"
+   ],
+   "body": "#showtooltip\n/cast [mod:shift] Seal of Righteousness; Seal of Command",
+   "why": "Unsealed Wrath stores up to 3 copies of your active Seal; swapping Seals cashes them in. Two seals on one key makes the swap a single finger.",
+   "covers": [
+    "seal-of-command",
+    "seal-of-righteousness"
+   ]
+  },
+  {
+   "id": "m-defensive",
+   "name": "Defensive stack (Bulwark / Shield / Protection)",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "body": "#showtooltip\n/cast [mod:shift] Divine Protection; Divine Shield",
+   "why": "Prot edits this to: /cast [mod:shift] Divine Shield; Templar's Bulwark. All three share Forbearance, so keep them on one key + modifiers.",
+   "covers": [
+    "divine-shield",
+    "divine-protection"
+   ]
+  },
+  {
+   "id": "m-stoneform",
+   "name": "Stoneform",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "stoneform",
+   "body": "#showtooltip Stoneform\n/cast Stoneform",
+   "why": "Self-cleanse of poison/disease/bleed + 10% physical reduction."
+  },
+  {
+   "id": "m-hoj",
+   "name": "Mouseover Hammer of Justice",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "hammer-of-justice",
+   "body": "#showtooltip\n/cast [@mouseover,harm,nodead][harm,nodead] Hammer of Justice",
+   "why": "Paladins have no interrupt; HoJ is the stop-the-cast button."
+  },
+  {
+   "id": "m-repent",
+   "name": "Mouseover Repentance",
+   "roles": [
+    "ret"
+   ],
+   "replaces": "repentance",
+   "body": "#showtooltip\n/cast [@mouseover,harm,nodead][harm,nodead] Repentance"
+  },
+  {
+   "id": "m-potion",
+   "name": "Healthstone (shift = potion)",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "body": "#showtooltip\n/use [mod:shift] Major Healing Potion; Major Healthstone",
+   "why": "Edit item names to whatever you carry at your level.",
+   "covers": [
+    "healthstone",
+    "health-potion"
+   ]
+  },
+  {
+   "id": "m-trinkets",
+   "name": "Trinket 1 (shift = trinket 2)",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "body": "#showtooltip\n/use [mod:shift] 14; 13",
+   "covers": [
+    "trinket-1",
+    "trinket-2"
+   ]
+  },
+  {
+   "id": "m-blessing",
+   "name": "Smart Blessing (Greater with shift)",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "body": "#showtooltip\n/cast [mod:shift] Greater Blessing of Kings; Blessing of Kings",
+   "why": "Out-of-combat buff key. Swap Kings for Might/Wisdom as your raid assignment requires.",
+   "covers": [
+    "blessing-of-kings",
+    "greater-blessing-of-kings"
+   ]
+  },
+  {
+   "id": "m-salv-cancel",
+   "name": "Cancel Salvation (tanks)",
+   "roles": [
+    "prot"
+   ],
+   "verify": true,
+   "body": "/cancelaura Salvation\n/cancelaura Mass Salvation",
+   "why": "Only relevant if Salvation/Mass Salvation exist live (Blizzard announced them; current client data doesn't list them)."
+  }
+ ]
 }

@@ -1,0 +1,708 @@
+<title>Lightforged Keybinds</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: a planning bench. Spec + layer controls on top, the keyboard and Naga
+   side by side as the "board", the ability palette as a drawer you pick from. */
+:root {
+  --bg: #eef0f3;
+  --surface: #ffffff;
+  --surface-2: #e3e7ec;
+  --line: #c9cfd8;
+  --fg: #1c2230;
+  --fg-soft: #586173;
+  --gold: #a77a12;
+  --gold-soft: #f3e3b8;
+  --holy: #b98a12;
+  --prot: #2f64a8;
+  --ret: #b23a3a;
+  --core: #1f7a4d;
+  --warn: #b5651d;
+  --crit: #b23a3a;
+  --key-bg: #fbfcfd;
+  --key-edge: #b8c0cc;
+  --shadow: 0 1px 0 var(--key-edge), 0 2px 6px rgba(28,34,48,.08);
+  --f-display: "Marcellus", "Trajan Pro", Georgia, serif;
+  --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12151c; --surface: #1a1f29; --surface-2: #232a36; --line: #333c4b;
+  --fg: #e6e9ef; --fg-soft: #9aa4b5; --gold: #e2b64b; --gold-soft: #3c3220;
+  --holy: #e2b64b; --prot: #6b9be0; --ret: #e06b6b; --core: #4fc58a; --warn: #e3a05a; --crit: #ef7a7a;
+  --key-bg: #202734; --key-edge: #0b0e13; --shadow: 0 2px 0 var(--key-edge), 0 3px 8px rgba(0,0,0,.35);
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #12151c; --surface: #1a1f29; --surface-2: #232a36; --line: #333c4b;
+  --fg: #e6e9ef; --fg-soft: #9aa4b5; --gold: #e2b64b; --gold-soft: #3c3220;
+  --holy: #e2b64b; --prot: #6b9be0; --ret: #e06b6b; --core: #4fc58a; --warn: #e3a05a; --crit: #ef7a7a;
+  --key-bg: #202734; --key-edge: #0b0e13; --shadow: 0 2px 0 var(--key-edge), 0 3px 8px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.45; }
+.wrap { max-width: 1280px; margin: 0 auto; padding-block: 18px 120px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: 28px; margin: 0; letter-spacing: .02em; text-wrap: balance; }
+h2 { font-family: var(--f-display); font-weight: 400; font-size: 19px; margin: 0; letter-spacing: .02em; }
+.eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-soft); font-weight: 700; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+header.top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; margin-bottom: 16px; }
+header.top .sub { color: var(--fg-soft); font-size: 14px; margin-top: 2px; }
+.save-state { font-size: 13px; color: var(--fg-soft); display: flex; align-items: center; gap: 6px; }
+.save-state .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--fg-soft); }
+.save-state[data-s="saved"] .dot { background: var(--core); }
+.save-state[data-s="saving"] .dot { background: var(--gold); }
+.save-state[data-s="local"] .dot { background: var(--warn); }
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 7px 12px; font-weight: 600; font-size: 14px; color: var(--fg-soft); }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--surface-2); color: var(--fg); }
+.seg.spec button[data-spec="holy"][aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--holy); }
+.seg.spec button[data-spec="prot"][aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--prot); }
+.seg.spec button[data-spec="ret"][aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--ret); }
+.ctl { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg-soft); }
+.ctl input[type=range] { width: 120px; accent-color: var(--gold); }
+.ctl output { font-family: var(--f-mono); color: var(--fg); min-width: 2ch; }
+.ctl select { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; }
+
+.board { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 900px) { .board { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 12px; color: var(--fg-soft); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+
+/* keyboard */
+.kb-scroll { overflow-x: auto; padding-bottom: 4px; }
+.kb { display: grid; gap: 6px; min-width: 560px; }
+.kb-row { display: grid; gap: 6px; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); }
+.key { position: relative; min-height: 64px; border-radius: 8px; border: 1px solid var(--key-edge); background: var(--key-bg);
+  box-shadow: var(--shadow); padding: 4px 5px 5px; text-align: left; display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+.key .cap { font-family: var(--f-mono); font-weight: 700; font-size: 12px; color: var(--fg-soft); }
+.key .act { font-size: 12px; font-weight: 600; line-height: 1.15; color: var(--fg); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
+.key .tag { position: absolute; top: 4px; right: 5px; font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-soft); }
+.key.span2 { grid-column: span 2; }
+.key.move { background: var(--surface-2); cursor: default; }
+.key.move .act { color: var(--fg-soft); font-weight: 400; }
+.key.mod { background: var(--surface-2); }
+.key.mod[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft), var(--shadow); }
+.key[data-u="core"] { border-color: var(--core); box-shadow: inset 0 -4px 0 var(--core), var(--shadow); }
+.key[data-u="frequent"] { box-shadow: inset 0 -4px 0 color-mix(in srgb, var(--core) 55%, transparent), var(--shadow); }
+.key[data-u="cooldown"], .key[data-u="talent-flex"] { box-shadow: inset 0 -4px 0 var(--gold), var(--shadow); }
+.key[data-u="emergency"] { box-shadow: inset 0 -4px 0 var(--crit), var(--shadow); }
+.key[data-u="none"] .act { color: var(--fg-soft); text-decoration: line-through; text-decoration-color: var(--line); }
+.key.flex .tag { color: var(--gold); }
+.key.selected { outline: 2px solid var(--gold); outline-offset: 1px; }
+.key.target { animation: pulse 1.6s ease-in-out infinite; }
+.key.dragover { outline: 2px dashed var(--gold); }
+@keyframes pulse { 50% { box-shadow: 0 0 0 3px var(--gold-soft), var(--shadow); } }
+@media (prefers-reduced-motion: reduce) { .key.target { animation: none; box-shadow: 0 0 0 3px var(--gold-soft), var(--shadow); } }
+
+/* mouse */
+.mouse { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px; align-items: start; }
+@media (max-width: 420px) { .mouse { grid-template-columns: minmax(0, 1fr); } }
+.mouse-group { display: grid; gap: 6px; }
+.mouse-group .label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-soft); font-weight: 700; }
+.plate { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 8px; border-radius: 14px; background: var(--surface-2); }
+.plate .key { min-height: 70px; border-radius: 50% / 38%; align-items: center; text-align: center; justify-content: center; }
+.plate .key .tag { position: static; }
+.wheel { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.wheel .key { min-height: 46px; }
+.tops { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.tilt-toggle { font-size: 12px; color: var(--fg-soft); display: flex; gap: 6px; align-items: center; }
+
+/* side column */
+.side { display: grid; gap: 14px; }
+.flex-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.flex-table th, .flex-table td { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+.flex-table th { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-soft); font-weight: 700; }
+.flex-table select { width: 100%; max-width: 160px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 3px 4px; font-size: 13px; }
+.flex-table td.k { font-family: var(--f-mono); font-weight: 700; white-space: nowrap; }
+.flex-wrap { overflow-x: auto; }
+
+.cov-score { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 10px; }
+.cov-score div { background: var(--surface-2); border-radius: 8px; padding: 8px; }
+.cov-score b { display: block; font-family: var(--f-mono); font-size: 20px; font-variant-numeric: tabular-nums; }
+.cov-score span { font-size: 12px; color: var(--fg-soft); }
+.cov-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
+.cov-list li { display: flex; gap: 8px; align-items: baseline; }
+.pill { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 1px 6px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.core { color: var(--core); } .pill.frequent { color: var(--core); opacity: .8; } .pill.cooldown, .pill.talent-flex { color: var(--gold); }
+.pill.emergency { color: var(--crit); } .pill.utility, .pill.situational, .pill.buff, .pill.ooc, .pill.lowlevel { color: var(--fg-soft); }
+.pill.none { color: var(--fg-soft); opacity: .6; }
+.ok { color: var(--core); font-size: 13px; }
+
+/* detail */
+.detail h3 { font-family: var(--f-display); font-weight: 400; font-size: 18px; margin: 2px 0 6px; }
+.detail .meta { font-size: 13px; color: var(--fg-soft); }
+.detail .txt { font-size: 14px; margin: 8px 0; }
+.detail pre { font-family: var(--f-mono); font-size: 12px; background: var(--surface-2); border-radius: 8px; padding: 8px 10px; white-space: pre-wrap; word-break: break-word; margin: 8px 0; }
+.spec-uses { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 6px; margin: 8px 0; }
+.spec-uses div { border: 1px solid var(--line); border-radius: 8px; padding: 6px; font-size: 12px; }
+.spec-uses div b { display: block; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+.spec-uses .holy b { color: var(--holy); } .spec-uses .prot b { color: var(--prot); } .spec-uses .ret b { color: var(--ret); }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-weight: 600; font-size: 13px; }
+.btn.primary { background: var(--gold); border-color: var(--gold); color: var(--surface); }
+.btn.danger { color: var(--crit); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.muted { color: var(--fg-soft); font-size: 13px; }
+
+/* palette */
+.palette { margin-top: 14px; }
+.pal-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.pal-tools input[type=search] { flex: 1 1 200px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 3px 10px; font-size: 13px; color: var(--fg-soft); }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--surface); border-color: var(--fg); }
+.pal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr)); gap: 8px; }
+.ab { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 10px; text-align: left; display: grid; gap: 4px; min-width: 0; overflow: hidden; }
+.ab:hover { border-color: var(--fg-soft); }
+.ab[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft); }
+.ab > div, .ab .nm { min-width: 0; }
+.ab .row1 { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.ab .nm { font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ab .kind { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-soft); font-weight: 700; white-space: nowrap; }
+.ab .row2 { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; color: var(--fg-soft); }
+.ab .keys { font-family: var(--f-mono); font-size: 11px; color: var(--fg); }
+.ab.locked { opacity: .5; }
+.ab.unbound-need { border-left: 3px solid var(--warn); }
+
+/* assign bar */
+.assign-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--fg); color: var(--surface);
+  padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; font-size: 14px; }
+.assign-bar[hidden] { display: none; }
+.assign-bar .btn { background: transparent; color: var(--surface); border-color: color-mix(in srgb, var(--surface) 40%, transparent); }
+
+/* layouts */
+.layouts textarea { width: 100%; min-height: 110px; font-family: var(--f-mono); font-size: 12px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+.layouts select, .layouts input[type=text] { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; min-width: 0; }
+.layouts .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.toast { font-size: 13px; color: var(--core); min-height: 1.2em; }
+details > summary { cursor: pointer; font-weight: 600; }
+.foot { margin-top: 18px; font-size: 12px; color: var(--fg-soft); max-width: 70ch; }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">WoW Forever · Dwarf Paladin</div>
+      <h1>Lightforged Keybinds</h1>
+      <div class="sub">One layout for Holy, Protection and Retribution. Only the gold <b>flex</b> keys change with talents.</div>
+    </div>
+    <div class="save-state" id="saveState" data-s="idle" aria-live="polite"><span class="dot"></span><span id="saveText">Loading…</span></div>
+  </header>
+
+  <div class="controls" role="toolbar" aria-label="View controls">
+    <div class="seg spec" role="group" aria-label="Spec">
+      <button type="button" data-spec="holy" aria-pressed="true">Holy</button>
+      <button type="button" data-spec="prot" aria-pressed="false">Protection</button>
+      <button type="button" data-spec="ret" aria-pressed="false">Retribution</button>
+    </div>
+    <div class="seg layer" role="group" aria-label="Modifier layer">
+      <button type="button" data-layer="" aria-pressed="true">No mod</button>
+      <button type="button" data-layer="Shift" aria-pressed="false">Shift</button>
+      <button type="button" data-layer="Ctrl" aria-pressed="false">Ctrl</button>
+      <button type="button" data-layer="Alt" aria-pressed="false">Alt</button>
+    </div>
+    <label class="ctl" for="lvl">Level <input type="range" id="lvl" min="1" max="60" value="60"><output id="lvlOut" for="lvl">60</output></label>
+  </div>
+
+  <div class="board">
+    <section class="panel" aria-labelledby="kbTitle">
+      <div class="panel-head">
+        <h2 id="kbTitle">Keyboard</h2>
+        <div class="legend">
+          <span><i style="background:var(--core)"></i>core</span>
+          <span><i style="background:color-mix(in srgb, var(--core) 55%, transparent)"></i>frequent</span>
+          <span><i style="background:var(--gold)"></i>cooldown / talent</span>
+          <span><i style="background:var(--crit)"></i>emergency</span>
+        </div>
+      </div>
+      <div class="kb-scroll"><div class="kb" id="kb"></div></div>
+
+      <div class="panel-head" style="margin-top:16px">
+        <h2>Razer Naga V2 Pro</h2>
+        <label class="tilt-toggle" for="tilt"><input type="checkbox" id="tilt"> Show wheel tilt</label>
+      </div>
+      <div class="mouse" id="mouse"></div>
+    </section>
+
+    <aside class="side">
+      <section class="panel detail" id="detail" aria-live="polite"></section>
+      <section class="panel" aria-labelledby="covTitle">
+        <div class="panel-head"><h2 id="covTitle">Coverage</h2><span class="muted" id="covSpec"></span></div>
+        <div class="cov-score" id="covScore"></div>
+        <ul class="cov-list" id="covList"></ul>
+      </section>
+      <section class="panel" aria-labelledby="flexTitle">
+        <div class="panel-head"><h2 id="flexTitle">Flex slots</h2><span class="muted">talent buttons per spec</span></div>
+        <div class="flex-wrap"><table class="flex-table" id="flexTable"></table></div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="panel palette" aria-labelledby="palTitle">
+    <div class="panel-head"><h2 id="palTitle">Abilities &amp; macros</h2><span class="muted">Tap one, then tap a key. On desktop you can also drag it.</span></div>
+    <div class="pal-tools">
+      <input type="search" id="q" placeholder="Search abilities, macros…" aria-label="Search">
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="pal-grid" id="pal"></div>
+  </section>
+
+  <section class="panel layouts" style="margin-top:14px" aria-labelledby="layTitle">
+    <div class="panel-head"><h2 id="layTitle">Layouts</h2><span class="muted" id="layNote"></span></div>
+    <div class="row">
+      <label for="laySel" class="muted">Current</label>
+      <select id="laySel"></select>
+      <input type="text" id="layName" placeholder="New layout name" aria-label="New layout name">
+      <button class="btn" type="button" id="layDup">Save as copy</button>
+      <button class="btn" type="button" id="layReset">Reset to draft v0</button>
+      <button class="btn danger" type="button" id="layDel">Delete</button>
+    </div>
+    <div id="layConfirm" class="btn-row" hidden></div>
+    <details style="margin-top:12px">
+      <summary>Export / import</summary>
+      <div class="btn-row">
+        <button class="btn" type="button" id="expText">Copy as bind list</button>
+        <button class="btn" type="button" id="expJson">Copy as JSON</button>
+        <button class="btn" type="button" id="impJson">Import JSON from box</button>
+      </div>
+      <textarea id="io" aria-label="Export or import text" spellcheck="false"></textarea>
+    </details>
+    <div class="toast" id="toast" role="status"></div>
+  </section>
+
+  <p class="foot">Ability data comes from the WoW Forever client (build 1.60.1.70862, hotfixes of 7 Nov 2026). Items marked <b>verify</b> were not confirmed in-game yet. Shift, Ctrl and Alt layers each hold a full set of binds. WASD is kept for movement.</p>
+</div>
+
+<div class="assign-bar" id="assignBar" hidden>
+  <span>Assigning <b id="assignName"></b>: tap a key or mouse button</span>
+  <button class="btn" type="button" id="assignCancel">Cancel</button>
+</div>
+
+<script>
+(() => {
+const DATA = /*__DATA__*/null;
+const SPECS = ["holy", "prot", "ret"];
+const SPEC_NAME = { holy: "Holy", prot: "Protection", ret: "Retribution" };
+const USAGE_RANK = { core: 0, frequent: 1, "talent-flex": 2, cooldown: 2, emergency: 3, utility: 4, situational: 5, buff: 6, lowlevel: 7, ooc: 8, none: 9 };
+const NEED = ["core", "frequent", "talent-flex", "cooldown", "emergency", "utility"];
+const FLEX_IDS = ["FLEX-A", "FLEX-B", "FLEX-C", "FLEX-D"];
+
+// ---------- catalog ----------
+const byId = {};
+DATA.spells.forEach(s => byId[s.id] = s);
+DATA.racials.forEach(s => byId[s.id] = s);
+DATA.general.forEach(s => byId[s.id] = s);
+DATA.macros.forEach(m => {
+  const base = m.replaces && byId[m.replaces];
+  const usage = {};
+  SPECS.forEach(sp => usage[sp] = base ? base.usage[sp] : (m.roles.includes(sp) ? "situational" : "none"));
+  byId[m.id] = { id: m.id, name: m.name, kind: "macro", category: base ? base.category : "macro", usage,
+    level: base ? base.level : 1, text: m.why || "", body: m.body, replaces: m.replaces || null, covers: m.covers || [], verify: !!m.verify, roles: m.roles };
+});
+FLEX_IDS.forEach(f => byId[f] = { id: f, name: f.replace("FLEX-", "Flex "), kind: "flex", category: "flex", level: 1 });
+const TALENT_SPELLS = DATA.spells.filter(s => s.source === "talent");
+
+const HW = DATA.hardware;
+const REACH = {};
+Object.entries(HW.keyboard.reachTiers).forEach(([t, keys]) => keys.forEach(k => REACH[k] = t));
+HW.mouse.buttons.forEach(b => { if (b.bindable) REACH[b.id] = b.reach; });
+
+// ---------- state ----------
+function draftLayout() {
+  const binds = {};
+  DATA.layout.binds.forEach(b => binds[b.key] = b.action);
+  const flex = {};
+  FLEX_IDS.forEach(f => flex[f] = { ...DATA.layout.flexSlots[f] });
+  return { binds, flex };
+}
+let store = { current: "Draft v0", layouts: { "Draft v0": draftLayout() } };
+const view = { spec: "holy", layer: "", level: 60, pick: null, key: null, q: "", cat: "all", tilt: false };
+try { const v = JSON.parse(localStorage.getItem("lk-view") || "{}"); Object.assign(view, { spec: v.spec || "holy", tilt: !!v.tilt }); } catch (e) {}
+const L = () => store.layouts[store.current];
+
+// ---------- helpers ----------
+const $ = s => document.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === "class") n.className = v; else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v === true ? "" : v);
+  }
+  kids.flat().forEach(c => c != null && n.append(c.nodeType ? c : document.createTextNode(c)));
+  return n;
+};
+const keyId = (base, layer) => (layer ? layer + "-" : "") + base;
+const resolve = (actionId, spec) => {
+  const a = byId[actionId];
+  if (!a) return null;
+  if (a.kind === "flex") { const sid = L().flex[actionId]?.[spec]; return sid ? byId[sid] : null; }
+  return a;
+};
+const usageOf = (actionId, spec) => { const a = resolve(actionId, spec); return a ? (a.usage?.[spec] || "situational") : null; };
+const spellOf = a => a ? (a.kind === "macro" ? (a.replaces || a.id) : a.id) : null;
+function keysFor(actionId) {
+  return Object.entries(L().binds).filter(([, v]) => v === actionId).map(([k]) => k);
+}
+function coveredIn(spec) {
+  const set = new Map();
+  for (const [k, v] of Object.entries(L().binds)) {
+    const a = resolve(v, spec); if (!a) continue;
+    const sid = spellOf(a);
+    [sid, ...(a.covers || [])].forEach(x => { if (!set.has(x)) set.set(x, []); set.get(x).push(k); });
+    if (a.kind === "macro" && a.replaces === "purify") set.set("cleanse", set.get("cleanse") || [k]);
+  }
+  // Purify shares the Cleanse key below 42
+  if (set.has("cleanse") && !set.has("purify")) set.set("purify", set.get("cleanse"));
+  return set;
+}
+function tierOfKey(k) {
+  const parts = k.split("-");
+  let mods = 0, base = k;
+  if (["Shift", "Ctrl", "Alt"].includes(parts[0])) { mods = parts[0] === "Shift" ? 1 : 2; base = parts.slice(1).join("-"); }
+  const order = ["best", "good", "ok", "far"];
+  const t = REACH[base] || "far";
+  return order[Math.min(3, order.indexOf(t) + mods)];
+}
+const short = s => s.length > 22 ? s.slice(0, 21) + "…" : s;
+
+// ---------- keyboard ----------
+const KB_ROWS = [
+  { cols: 16, keys: [["F1"], ["F2"], ["F3"], ["F4"], ["F5"]] },
+  { cols: 16, keys: [["`"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"]] },
+  { cols: 16, keys: [["Tab", 2], ["Q"], ["W", 1, "move"], ["E"], ["R"], ["T"], ["Y"]] },
+  { cols: 16, keys: [["Caps", 2], ["A", 1, "move"], ["S", 1, "move"], ["D", 1, "move"], ["F"], ["G"], ["H"]] },
+  { cols: 16, keys: [["Shift", 2, "mod"], ["Z"], ["X"], ["C"], ["V"], ["B"]] },
+  { cols: 16, keys: [["Ctrl", 2, "mod"], ["Alt", 2, "mod"], ["Space", 4, "move"]] },
+];
+function keyButton(base, opts = {}) {
+  const id = keyId(base, view.layer);
+  const actionId = L().binds[id];
+  const a = actionId ? byId[actionId] : null;
+  const r = actionId ? resolve(actionId, view.spec) : null;
+  const u = actionId ? (r ? usageOf(actionId, view.spec) : "none") : null;
+  const locked = r && r.level > view.level;
+  const label = base.startsWith("M-") ? opts.label : base;
+  let actText = "";
+  if (a) actText = a.kind === "flex" ? (r ? r.name : "(empty in " + SPEC_NAME[view.spec] + ")") : a.name;
+  const b = el("button", {
+    type: "button", class: "key" + (opts.cls ? " " + opts.cls : "") + (a?.kind === "flex" ? " flex" : "") +
+      (view.key === id ? " selected" : "") + (view.pick ? " target" : ""),
+    "data-u": u, "data-key": id,
+    "aria-label": `${view.layer ? view.layer + " " : ""}${label}: ${actText || "unbound"}`,
+    onclick: () => onKey(id),
+  },
+    el("span", { class: "cap", text: (view.layer ? view.layer[0] + "-" : "") + label }),
+    el("span", { class: "act", text: actText ? short(actText) + (locked ? " (lvl " + r.level + ")" : "") : "" }),
+    a?.kind === "flex" ? el("span", { class: "tag", text: a.name }) : (a?.kind === "macro" ? el("span", { class: "tag", text: "macro" }) : null),
+  );
+  b.addEventListener("dragover", e => { e.preventDefault(); b.classList.add("dragover"); });
+  b.addEventListener("dragleave", () => b.classList.remove("dragover"));
+  b.addEventListener("drop", e => { e.preventDefault(); const aid = e.dataTransfer.getData("text/plain"); if (aid && byId[aid]) assign(id, aid); });
+  return b;
+}
+function renderKeyboard() {
+  const kb = $("#kb"); kb.replaceChildren();
+  KB_ROWS.forEach(row => {
+    const r = el("div", { class: "kb-row", style: `--cols:${row.cols}` });
+    row.keys.forEach(([k, span = 1, kind]) => {
+      let node;
+      if (kind === "move") node = el("div", { class: "key move", "aria-hidden": "true" }, el("span", { class: "cap", text: k }), el("span", { class: "act", text: k === "Space" ? "Jump" : "Move" }));
+      else if (kind === "mod") node = el("button", { type: "button", class: "key mod", "aria-pressed": String(view.layer === k), onclick: () => setLayer(view.layer === k ? "" : k) },
+        el("span", { class: "cap", text: k }), el("span", { class: "act", text: view.layer === k ? "Layer on" : "Show layer" }));
+      else node = keyButton(k);
+      node.style.gridColumn = `span ${span * 2}`;
+      r.append(node);
+    });
+    kb.append(r);
+  });
+}
+function renderMouse() {
+  const m = $("#mouse"); m.replaceChildren();
+  const btn = id => HW.mouse.buttons.find(b => b.id === id);
+  const left = el("div", { class: "mouse-group" },
+    el("div", { class: "label", text: "Top & wheel" }),
+    el("div", { class: "tops" }, keyButton("M-TOP1", { label: "Top 1" }), keyButton("M-TOP2", { label: "Top 2" })),
+    el("div", { class: "wheel" },
+      keyButton("M-WUP", { label: "Wheel ▲" }), keyButton("M-MMB", { label: "Wheel click" }), keyButton("M-WDN", { label: "Wheel ▼" })),
+    view.tilt ? el("div", { class: "tops" }, keyButton("M-TILTL", { label: "Tilt ◀" }), keyButton("M-TILTR", { label: "Tilt ▶" })) : null,
+  );
+  const plate = el("div", { class: "plate", role: "group", "aria-label": "6-button side plate" });
+  ["M-S1", "M-S2", "M-S3", "M-S4", "M-S5", "M-S6"].forEach((id, i) => plate.append(keyButton(id, { label: String(i + 1) })));
+  const right = el("div", { class: "mouse-group" }, el("div", { class: "label", text: "Side plate (thumb)" }), plate,
+    el("div", { class: "muted", text: "Front of the mouse is on the left. Top row = 1–3." }));
+  m.append(left, right);
+  void btn;
+}
+
+// ---------- side panels ----------
+function renderDetail() {
+  const d = $("#detail"); d.replaceChildren();
+  const id = view.key;
+  if (!id) {
+    d.append(el("div", { class: "eyebrow", text: "Key details" }),
+      el("h3", { text: "Pick a key" }),
+      el("p", { class: "muted", text: "Tap any key or mouse button to see what it does in each spec. To change it, pick an ability below and tap the key." }));
+    return;
+  }
+  const actionId = L().binds[id];
+  const a = actionId && byId[actionId];
+  d.append(el("div", { class: "eyebrow", text: id.replace(/M-/g, "Mouse ") }));
+  if (!a) {
+    d.append(el("h3", { text: "Unbound" }), el("p", { class: "muted", text: `Reach: ${tierOfKey(id)}. Pick an ability below to put it here.` }),
+      el("div", { class: "btn-row" }, el("button", { class: "btn", type: "button", text: "Close", onclick: () => { view.key = null; render(); } })));
+    return;
+  }
+  d.append(el("h3", { text: a.name + (a.verify ? " · verify" : "") }));
+  const meta = [a.kind, a.level > 1 ? "learned at " + a.level : null, a.ranks > 1 ? a.ranks + " ranks" : null, a.cost || null, "reach: " + tierOfKey(id)].filter(Boolean).join(" · ");
+  d.append(el("div", { class: "meta", text: meta }));
+  const uses = el("div", { class: "spec-uses" });
+  SPECS.forEach(sp => {
+    const r = resolve(actionId, sp);
+    uses.append(el("div", { class: sp }, el("b", { text: SPEC_NAME[sp] }), r ? (a.kind === "flex" ? r.name + " · " : "") : "", el("span", { class: "pill " + (r ? usageOf(actionId, sp) : "none"), text: r ? usageOf(actionId, sp) : "empty" })));
+  });
+  d.append(uses);
+  const r = resolve(actionId, view.spec);
+  if (a.kind === "macro") d.append(el("pre", { text: a.body }));
+  const txt = a.kind === "flex" ? (r ? r.text : "") : a.text;
+  if (txt) d.append(el("p", { class: "txt", text: txt }));
+  const note = a.kind === "flex" ? r?.notes : a.notes;
+  if (note) d.append(el("p", { class: "muted", text: note }));
+  const row = el("div", { class: "btn-row" },
+    el("button", { class: "btn danger", type: "button", text: "Unbind", onclick: () => { delete L().binds[id]; changed(); } }),
+    a.kind === "macro" ? el("button", { class: "btn", type: "button", text: "Copy macro", onclick: () => copy(a.body, "Macro copied.") }) : null,
+    el("button", { class: "btn", type: "button", text: "Close", onclick: () => { view.key = null; render(); } }));
+  d.append(row);
+}
+function renderCoverage() {
+  const sp = view.spec, cov = coveredIn(sp);
+  $("#covSpec").textContent = SPEC_NAME[sp] + " · level " + view.level;
+  const needed = Object.values(byId).filter(a => (a.kind === "spell" || a.kind === "racial" || a.kind === "general") && NEED.includes(a.usage?.[sp]) && a.level <= view.level);
+  const missing = needed.filter(a => !cov.has(a.id)).sort((x, y) => USAGE_RANK[x.usage[sp]] - USAGE_RANK[y.usage[sp]]);
+  const core = needed.filter(a => a.usage[sp] === "core");
+  const coreOnGood = core.filter(a => cov.has(a.id) && cov.get(a.id).some(k => ["best", "good"].includes(tierOfKey(k))));
+  const score = $("#covScore"); score.replaceChildren(
+    el("div", {}, el("b", { text: `${needed.length - missing.length}/${needed.length}` }), el("span", { text: "needed abilities bound" })),
+    el("div", {}, el("b", { text: `${coreOnGood.length}/${core.length}` }), el("span", { text: "core on easy reach" })),
+    el("div", {}, el("b", { text: String(Object.keys(L().binds).length) }), el("span", { text: "keys in use" })),
+  );
+  const list = $("#covList"); list.replaceChildren();
+  if (!missing.length) list.append(el("li", { class: "ok", text: `Every core, cooldown, emergency and utility ability for ${SPEC_NAME[sp]} has a key.` }));
+  missing.slice(0, 12).forEach(a => list.append(el("li", {},
+    el("span", { class: "pill " + a.usage[sp], text: a.usage[sp] }),
+    el("button", { type: "button", class: "chip", text: a.name + " — bind", onclick: () => startPick(a.id) }))));
+  if (missing.length > 12) list.append(el("li", { class: "muted", text: `+${missing.length - 12} more` }));
+}
+function renderFlex() {
+  const t = $("#flexTable"); t.replaceChildren();
+  t.append(el("tr", {}, el("th", { text: "Slot" }), el("th", { text: "Key" }), ...SPECS.map(s => el("th", { text: SPEC_NAME[s] }))));
+  FLEX_IDS.forEach(f => {
+    const keys = keysFor(f);
+    const tr = el("tr", {}, el("td", { text: f.replace("FLEX-", "") }), el("td", { class: "k", text: keys.join(", ") || "—" }));
+    SPECS.forEach(sp => {
+      const sel = el("select", { id: `flex-${f}-${sp}`, "aria-label": `${f} for ${SPEC_NAME[sp]}`, onchange: e => { L().flex[f][sp] = e.target.value || null; changed(); } });
+      sel.append(el("option", { value: "", text: "— empty —" }));
+      TALENT_SPELLS.forEach(s => sel.append(el("option", { value: s.id, text: s.name + " (" + s.talent.tree[0] + ")", selected: L().flex[f][sp] === s.id })));
+      tr.append(el("td", {}, sel));
+    });
+    t.append(tr);
+  });
+}
+
+// ---------- palette ----------
+const CATS = [["all", "All"], ["need", "Unbound needs"], ["heal", "Heals"], ["strike", "Melee"], ["seal", "Seals"], ["judgement", "Judgement"], ["defensive", "Defensive"], ["blessing", "Blessings"], ["aura", "Auras"], ["macro", "Macros"], ["talent", "Talents"], ["general", "General"], ["flex", "Flex"]];
+function renderChips() {
+  const c = $("#chips"); c.replaceChildren();
+  CATS.forEach(([k, n]) => c.append(el("button", { type: "button", class: "chip", "aria-pressed": String(view.cat === k), text: n, onclick: () => { view.cat = k; renderPalette(); renderChips(); } })));
+}
+function renderPalette() {
+  const sp = view.spec, cov = coveredIn(sp), q = view.q.trim().toLowerCase();
+  const pal = $("#pal"); pal.replaceChildren();
+  const items = Object.values(byId).filter(a => {
+    if (q && !(a.name.toLowerCase().includes(q) || (a.body || "").toLowerCase().includes(q))) return false;
+    switch (view.cat) {
+      case "all": return true;
+      case "need": return a.kind !== "flex" && a.kind !== "macro" && NEED.includes(a.usage?.[sp]) && !cov.has(a.id);
+      case "macro": return a.kind === "macro";
+      case "talent": return a.source === "talent";
+      case "general": return a.kind === "general" || a.kind === "racial";
+      case "flex": return a.kind === "flex";
+      case "heal": return a.category === "heal" || a.category === "dispel";
+      case "strike": return ["strike", "aoe", "damage"].includes(a.category);
+      case "defensive": return ["defensive", "emergency"].includes(a.category);
+      default: return a.category === view.cat;
+    }
+  }).sort((x, y) => {
+    const ux = x.kind === "flex" ? -1 : USAGE_RANK[x.usage?.[sp]] ?? 9, uy = y.kind === "flex" ? -1 : USAGE_RANK[y.usage?.[sp]] ?? 9;
+    return ux - uy || x.name.localeCompare(y.name);
+  });
+  if (!items.length) { pal.append(el("p", { class: "muted", text: "Nothing matches. Clear the search or pick another filter." })); return; }
+  items.forEach(a => {
+    const keys = keysFor(a.id);
+    const u = a.kind === "flex" ? "talent-flex" : a.usage?.[sp] || "situational";
+    const needUnbound = a.kind !== "flex" && a.kind !== "macro" && NEED.includes(u) && !cov.has(a.id);
+    const b = el("button", { type: "button", class: "ab" + (a.level > view.level ? " locked" : "") + (needUnbound ? " unbound-need" : ""),
+      draggable: "true", "aria-pressed": String(view.pick === a.id), onclick: () => startPick(view.pick === a.id ? null : a.id) },
+      el("div", { class: "row1" }, el("span", { class: "nm", text: a.name }), el("span", { class: "kind", text: a.kind === "spell" ? (a.source === "talent" ? "talent" : "spell") : a.kind })),
+      el("div", { class: "row2" }, el("span", { class: "pill " + u, text: u }),
+        el("span", { class: "keys", text: keys.length ? keys.join(" · ") : (a.level > 1 ? "lvl " + a.level : "") })));
+    b.addEventListener("dragstart", e => { e.dataTransfer.setData("text/plain", a.id); e.dataTransfer.effectAllowed = "copy"; });
+    pal.append(b);
+  });
+}
+
+// ---------- interactions ----------
+function startPick(aid) {
+  view.pick = aid; $("#assignBar").hidden = !aid;
+  if (aid) $("#assignName").textContent = byId[aid].name;
+  renderKeyboard(); renderMouse(); renderPalette();
+  if (aid && window.matchMedia("(max-width: 900px)").matches) $("#kb").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function onKey(id) {
+  if (view.pick) { assign(id, view.pick); return; }
+  view.key = view.key === id ? null : id; render();
+}
+function assign(id, aid) {
+  L().binds[id] = aid;
+  view.key = id; view.pick = null; $("#assignBar").hidden = true;
+  changed();
+  toast(`${byId[aid].name} → ${id.replace(/M-/g, "Mouse ")}`);
+}
+function setLayer(l) { view.layer = l; render(); }
+document.querySelectorAll(".seg.spec button").forEach(b => b.addEventListener("click", () => {
+  view.spec = b.dataset.spec; document.querySelectorAll(".seg.spec button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  rememberView(); render();
+}));
+document.querySelectorAll(".seg.layer button").forEach(b => b.addEventListener("click", () => setLayer(b.dataset.layer)));
+$("#lvl").addEventListener("input", e => { view.level = +e.target.value; $("#lvlOut").textContent = view.level; render(); });
+$("#q").addEventListener("input", e => { view.q = e.target.value; renderPalette(); });
+$("#tilt").addEventListener("change", e => { view.tilt = e.target.checked; rememberView(); renderMouse(); });
+$("#assignCancel").addEventListener("click", () => startPick(null));
+document.addEventListener("keydown", e => { if (e.key === "Escape" && view.pick) startPick(null); });
+function rememberView() { try { localStorage.setItem("lk-view", JSON.stringify({ spec: view.spec, tilt: view.tilt })); } catch (e) {} }
+
+function render() {
+  document.querySelectorAll(".seg.layer button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.layer === view.layer)));
+  document.querySelectorAll(".seg.spec button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.spec === view.spec)));
+  $("#tilt").checked = view.tilt;
+  renderKeyboard(); renderMouse(); renderDetail(); renderCoverage(); renderFlex(); renderPalette(); renderLayouts();
+}
+
+// ---------- layouts ----------
+function renderLayouts() {
+  const s = $("#laySel"); s.replaceChildren();
+  Object.keys(store.layouts).forEach(n => s.append(el("option", { value: n, text: n, selected: n === store.current })));
+}
+$("#laySel").addEventListener("change", e => { store.current = e.target.value; view.key = null; changed(); });
+$("#layDup").addEventListener("click", () => {
+  const n = $("#layName").value.trim() || store.current + " copy";
+  if (store.layouts[n]) { toast(`A layout called "${n}" already exists. Pick another name.`); return; }
+  store.layouts[n] = JSON.parse(JSON.stringify(L())); store.current = n; $("#layName").value = ""; changed(); toast(`Saved "${n}".`);
+});
+function confirmBar(msg, label, fn) {
+  const c = $("#layConfirm"); c.replaceChildren(el("span", { class: "muted", text: msg }),
+    el("button", { class: "btn danger", type: "button", text: label, onclick: () => { c.hidden = true; fn(); } }),
+    el("button", { class: "btn", type: "button", text: "Keep it", onclick: () => { c.hidden = true; } }));
+  c.hidden = false;
+}
+$("#layReset").addEventListener("click", () => confirmBar(`Replace "${store.current}" with draft v0?`, "Reset", () => { store.layouts[store.current] = draftLayout(); changed(); toast("Reset to draft v0."); }));
+$("#layDel").addEventListener("click", () => {
+  if (Object.keys(store.layouts).length < 2) { toast("This is your only layout. Save a copy first, then delete."); return; }
+  confirmBar(`Delete "${store.current}"?`, "Delete", () => { delete store.layouts[store.current]; store.current = Object.keys(store.layouts)[0]; changed(); toast("Deleted."); });
+});
+function bindListText() {
+  const lines = [`Lightforged Keybinds — ${store.current}`, ""];
+  const order = k => [k.startsWith("Shift") ? 1 : k.startsWith("Ctrl") ? 2 : k.startsWith("Alt") ? 3 : 0, k];
+  Object.entries(L().binds).sort((a, b) => { const x = order(a[0]), y = order(b[0]); return x[0] - y[0] || x[1].localeCompare(y[1]); }).forEach(([k, v]) => {
+    const a = byId[v]; if (!a) return;
+    if (a.kind === "flex") lines.push(`${k.padEnd(14)} ${a.name}: ` + SPECS.map(sp => `${SPEC_NAME[sp]}=${resolve(v, sp)?.name || "—"}`).join(", "));
+    else lines.push(`${k.padEnd(14)} ${a.name}${a.kind === "macro" ? " (macro)" : ""}`);
+  });
+  const macros = [...new Set(Object.values(L().binds))].map(v => byId[v]).filter(a => a && a.kind === "macro");
+  if (macros.length) { lines.push("", "Macros:"); macros.forEach(m => lines.push("", `-- ${m.name}`, m.body)); }
+  return lines.join("\n");
+}
+$("#expText").addEventListener("click", () => { $("#io").value = bindListText(); copy($("#io").value, "Bind list copied."); });
+$("#expJson").addEventListener("click", () => { $("#io").value = JSON.stringify({ name: store.current, ...L() }, null, 1); copy($("#io").value, "JSON copied."); });
+$("#impJson").addEventListener("click", () => {
+  try {
+    const j = JSON.parse($("#io").value);
+    if (!j || typeof j.binds !== "object" || typeof j.flex !== "object") throw new Error("missing binds or flex");
+    let n = (j.name || "Imported").toString().slice(0, 40); while (store.layouts[n]) n += "+";
+    store.layouts[n] = { binds: j.binds, flex: j.flex }; store.current = n; changed(); toast(`Imported as "${n}".`);
+  } catch (e) { toast("That text isn't a layout export. Use “Copy as JSON” to get the right format."); }
+});
+async function copy(text, msg) {
+  try { await navigator.clipboard.writeText(text); toast(msg); }
+  catch (e) { const io = $("#io"); io.value = text; io.closest("details").open = true; io.focus(); io.select(); toast("Copy blocked here. The text is selected in the box: copy it from there."); }
+}
+let toastT; function toast(m) { $("#toast").textContent = m; clearTimeout(toastT); toastT = setTimeout(() => $("#toast").textContent = "", 4000); }
+
+// ---------- persistence ----------
+let docRef = null, saveT = null, writing = false, pending = false, lastJson = "";
+function setSave(s, t) { $("#saveState").dataset.s = s; $("#saveText").textContent = t; }
+function changed() {
+  render();
+  const json = JSON.stringify(store);
+  try { localStorage.setItem("lk-store", json); } catch (e) {}
+  if (!docRef) { setSave("local", "Saved in this browser only"); return; }
+  if (json === lastJson) return;
+  setSave("saving", "Saving…");
+  clearTimeout(saveT); saveT = setTimeout(flush, 700);
+}
+async function flush() {
+  if (writing) { pending = true; return; }
+  const json = JSON.stringify(store);
+  if (json === lastJson) { setSave("saved", "Saved to your account"); return; }
+  writing = true;
+  try { await docRef.set({ v: 1, store: JSON.parse(json) }); lastJson = json; setSave("saved", "Saved to your account"); }
+  catch (e) { setSave("local", e?.code === "quota_exceeded" ? "Account storage is full: saved in this browser" : "Couldn't reach your account: saved in this browser"); }
+  writing = false;
+  if (pending) { pending = false; flush(); }
+}
+function validStore(s) { return s && typeof s === "object" && s.layouts && typeof s.layouts === "object" && Object.keys(s.layouts).length && s.layouts[s.current]; }
+try { const s = JSON.parse(localStorage.getItem("lk-store") || "null"); if (validStore(s)) store = s; } catch (e) {}
+render();
+setSave("local", "Saved in this browser only");
+
+(async () => {
+  const cl = window.claude;
+  if (!cl || !cl.use) return;
+  const [db, user] = await Promise.all([cl.use("db"), cl.use("user")]);
+  if (!db || !user) return;
+  const uid = await user.id();
+  if (!uid) return;
+  docRef = db.doc("data/users/" + uid + "/planner");
+  setSave("saving", "Loading your layouts…");
+  const timer = setTimeout(() => setSave("local", "Account not reachable yet: saved in this browser"), 10000);
+  let first = true;
+  docRef.onSnapshot(snap => {
+    if (!snap.metadata.fromCache) clearTimeout(timer);
+    if (snap.metadata.hasPendingWrites) return;
+    const d = snap.exists ? snap.data() : null;
+    if (d && validStore(d.store)) {
+      const json = JSON.stringify(d.store);
+      if (json !== JSON.stringify(store)) { store = JSON.parse(json); render(); }
+      lastJson = json; setSave("saved", "Saved to your account");
+    } else if (first && !snap.metadata.fromCache) {
+      // first visit with an account: push whatever this browser has
+      flush();
+    }
+    if (!snap.metadata.fromCache) first = false;
+  }, err => { clearTimeout(timer); docRef = null; setSave("local", "Saved in this browser only"); });
+})();
+})();
+</script>
