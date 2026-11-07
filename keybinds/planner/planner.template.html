@@ -272,6 +272,24 @@ details > summary { cursor: pointer; font-weight: 600; }
 .float { position: absolute; font-family: var(--f-mono); font-weight: 700; font-size: 14px; pointer-events: none; animation: rise 1s ease-out forwards; }
 @keyframes rise { to { transform: translateY(-40px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .float { animation: none; opacity: 0; } }
+/* tooltip */
+.tip { position: fixed; z-index: 70; width: max-content; max-width: min(340px, calc(100vw - 24px)); background: var(--surface); color: var(--fg); border: 1px solid var(--gold);
+  border-radius: 10px; padding: 10px 12px; box-shadow: 0 10px 30px rgba(0,0,0,.28); pointer-events: none; font-size: 13px; line-height: 1.4; display: grid; gap: 5px; }
+.tip[hidden] { display: none; }
+.tip .t-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.tip .t-name { font-family: var(--f-display); font-size: 17px; color: var(--gold); }
+.tip .t-rank { font-size: 12px; color: var(--fg-soft); white-space: nowrap; }
+.tip .t-cost { font-size: 12.5px; }
+.tip .t-src { font-size: 12px; color: var(--fg-soft); }
+.tip .t-desc { color: var(--fg); }
+.tip .t-note { font-size: 12px; color: var(--fg-soft); font-style: italic; }
+.tip .t-warn { font-size: 12px; color: var(--crit); font-weight: 600; }
+.tip .t-uses { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11.5px; }
+.tip .t-uses b { font-weight: 700; }
+.tip .t-uses .holy b { color: var(--holy); } .tip .t-uses .prot b { color: var(--prot); } .tip .t-uses .ret b { color: var(--ret); }
+.tip pre { font-family: var(--f-mono); font-size: 11px; margin: 0; white-space: pre-wrap; word-break: break-word; background: var(--surface-2); border-radius: 6px; padding: 6px 8px; }
+.tip .t-keys { font-family: var(--f-mono); font-size: 11.5px; color: var(--fg-soft); }
+.tip hr { border: 0; border-top: 1px solid var(--line); margin: 2px 0; width: 100%; }
 </style>
 
 <div class="wrap">
@@ -425,6 +443,8 @@ details > summary { cursor: pointer; font-weight: 600; }
     <div class="opt-list" id="sheetList"></div>
   </div>
 </div>
+
+<div class="tip" id="tip" role="tooltip" hidden></div>
 
 <div class="arena" id="arena" hidden tabindex="-1" aria-label="Practice run">
   <div class="a-top">
@@ -619,6 +639,7 @@ function catMatch(a, cat, sp, cov) {
   return true;
 }
 function openSheet(id) {
+  hideTip();
   view.key = id; view.sheetQ = ""; $("#sheetQ").value = "";
   if (!view.sheetCat) view.sheetCat = "suggested";
   $("#sheetScrim").hidden = false;
@@ -677,7 +698,7 @@ function renderSheetList() {
     else if (a.level > 1) sub.push("lvl " + a.level);
     if (keys.length) sub.push("on " + keys.map(keyLabel).join(", "));
     if (a.kind === "macro" && a.replaces) sub.push("macro for " + (byId[a.replaces]?.name || a.replaces));
-    list.append(el("button", { type: "button", class: "opt" + (a.level > view.level ? " locked" : "") + (cur === a.id ? " current" : ""), onclick: () => { assign(id, a.id); closeSheet(); } },
+    list.append(el("button", { type: "button", "data-tip-action": a.id, class: "opt" + (a.level > view.level ? " locked" : "") + (cur === a.id ? " current" : ""), onclick: () => { assign(id, a.id); closeSheet(); } },
       el("span", { class: "nm", text: a.name }),
       el("span", { class: "right" }, el("span", { class: "kind", text: a.kind === "spell" ? (a.source === "talent" ? "talent" : "spell") : a.kind }), el("span", { class: "pill " + u, text: u })),
       sub.length ? el("span", { class: "sub", text: sub.join(" · ") }) : null));
@@ -732,6 +753,7 @@ function onKey(id) {
   openSheet(id);
 }
 function assign(id, aid) {
+  hideTip();
   L().binds[id] = aid; changed();
   toast(`${byId[aid].name} → ${keyLabel(id)}`);
 }
@@ -806,6 +828,100 @@ async function copy(text, msg) {
   catch (e) { const io = $("#io"); io.value = text; io.closest("details").open = true; io.focus(); io.select(); toast("Copy was blocked. The text is selected in the export box: copy it from there."); }
 }
 let toastT; function toast(m) { $("#toast").textContent = m; clearTimeout(toastT); toastT = setTimeout(() => $("#toast").textContent = "", 4000); }
+
+
+// ================= tooltips =================
+const TIP_STATUS = { new: "New in WoW Forever", changed: "Changed in WoW Forever" };
+function rankAt(a, lvl) {
+  if (!a || !a.rk || !a.rk.length) return null;
+  let r = null;
+  a.rk.forEach((x, i) => { if ((x[0] || 1) <= lvl) r = { n: i + 1, level: x[0], text: x[1], cost: x[2] }; });
+  return r || { n: 1, level: a.rk[0][0], text: a.rk[0][1], cost: a.rk[0][2], locked: true };
+}
+function spellTipParts(a, spec, lvl) {
+  const parts = [];
+  const r = rankAt(a, lvl);
+  const head = el("div", { class: "t-head" }, el("span", { class: "t-name", text: a.name }),
+    el("span", { class: "t-rank", text: r && a.rk.length > 1 ? `Rank ${r.n} of ${a.rk.length}` : a.kind === "racial" ? "Dwarf racial" : a.kind === "general" ? "General" : "" }));
+  parts.push(head);
+  const cost = r ? r.cost : a.cost;
+  if (cost) parts.push(el("div", { class: "t-cost", text: cost }));
+  const src = [];
+  if (a.source === "talent" && a.talent) src.push(`${a.talent.tree} talent · ${a.talent.pointsRequired} points in tree`);
+  else if (a.level > 1) src.push(`Learned at level ${a.level}`);
+  if (r && a.rk.length > 1 && !r.locked && r.level > 1) src.push(`this rank at ${r.level}`);
+  if (TIP_STATUS[a.status]) src.push(TIP_STATUS[a.status]);
+  if (src.length) parts.push(el("div", { class: "t-src", text: src.join(" · ") }));
+  if (r?.locked || (a.level || 1) > lvl) parts.push(el("div", { class: "t-warn", text: `Not learned yet at level ${lvl}` }));
+  else if (a.source === "talent" && !knownIn(a.id, spec, lvl)) parts.push(el("div", { class: "t-warn", text: `Not in your ${SPEC_NAME[spec]} flex slots` }));
+  const desc = r ? r.text : a.text;
+  if (desc) parts.push(el("div", { class: "t-desc", text: desc }));
+  if (a.notes) parts.push(el("div", { class: "t-note", text: a.notes }));
+  if (a.confidence === "medium") parts.push(el("div", { class: "t-warn", text: "Not confirmed in the client data: verify in game." }));
+  return parts;
+}
+function usesRow(actionId) {
+  const u = el("div", { class: "t-uses" });
+  SPECS.forEach(s => { const r = resolve(actionId, s); u.append(el("span", { class: s }, el("b", { text: SPEC_NAME[s] + ": " }), r ? (byId[actionId].kind === "flex" ? r.name + " · " : "") + (usageOf(actionId, s)) : "empty")); });
+  return u;
+}
+function tipContent(actionId, keyIdOpt) {
+  const a = byId[actionId]; if (!a) return null;
+  const spec = S && !S.done && !$("#arena").hidden ? S.spec : view.spec;
+  const lvl = S && !S.done && !$("#arena").hidden ? S.level : view.level;
+  const out = [];
+  if (a.kind === "flex") {
+    out.push(el("div", { class: "t-head" }, el("span", { class: "t-name", text: a.name }), el("span", { class: "t-rank", text: "Flex slot" })));
+    out.push(el("div", { class: "t-src", text: "Holds a different talent ability in each spec." }));
+    const r = resolve(actionId, spec);
+    if (r) { out.push(el("hr")); out.push(...spellTipParts(r, spec, lvl)); }
+    else out.push(el("div", { class: "t-warn", text: `Empty in ${SPEC_NAME[spec]}. Set it in the Flex slots table.` }));
+  } else if (a.kind === "macro") {
+    out.push(el("div", { class: "t-head" }, el("span", { class: "t-name", text: a.name }), el("span", { class: "t-rank", text: "Macro" })));
+    if (a.text) out.push(el("div", { class: "t-desc", text: a.text }));
+    out.push(el("pre", { text: a.body }));
+    if (a.verify) out.push(el("div", { class: "t-warn", text: "Depends on behaviour not yet confirmed in game." }));
+    const base = a.replaces && byId[a.replaces];
+    if (base) { out.push(el("hr")); out.push(...spellTipParts(base, spec, lvl)); }
+  } else out.push(...spellTipParts(a, spec, lvl));
+  out.push(el("hr"), usesRow(actionId));
+  const ks = keysFor(actionId);
+  if (ks.length) out.push(el("div", { class: "t-keys", text: "Bound to: " + ks.map(k => `${keyLabel(k)} (${tierOfKey(k)} reach)`).join(", ") }));
+  else out.push(el("div", { class: "t-keys", text: "Not bound to any key yet" }));
+  return out;
+}
+const tipEl = $("#tip");
+const canHover = window.matchMedia("(hover: hover) and (pointer: fine)");
+let tipAnchor = null;
+function showTip(anchor, actionId, keyIdOpt) {
+  const parts = tipContent(actionId, keyIdOpt); if (!parts) return hideTip();
+  tipEl.replaceChildren(...parts); tipEl.hidden = false; tipAnchor = anchor;
+  const r = anchor.getBoundingClientRect(), tw = tipEl.offsetWidth, th = tipEl.offsetHeight, vw = innerWidth, vh = innerHeight, gap = 8;
+  let left = Math.min(Math.max(12, r.left + r.width / 2 - tw / 2), vw - tw - 12);
+  let top = r.bottom + gap;
+  if (top + th > vh - 12) top = r.top - th - gap;
+  if (top < 12) { top = Math.max(12, Math.min(vh - th - 12, r.top)); left = r.right + gap + tw < vw ? r.right + gap : Math.max(12, r.left - tw - gap); }
+  tipEl.style.left = left + "px"; tipEl.style.top = top + "px";
+}
+function hideTip() { tipEl.hidden = true; tipAnchor = null; }
+function tipTarget(node) {
+  const k = node.closest("[data-tip-action], [data-key]"); if (!k) return null;
+  const aid = k.dataset.tipAction || L().binds[k.dataset.key];
+  return aid ? { node: k, aid, key: k.dataset.key && !k.dataset.tipAction ? k.dataset.key : (k.dataset.key || null) } : null;
+}
+let tipKey = null;
+document.addEventListener("mousemove", e => {
+  if (!canHover.matches) return;
+  const t = tipTarget(e.target);
+  if (!t) { if (tipAnchor) { hideTip(); tipKey = null; } return; }
+  const sig = t.aid + "|" + (t.key || "");
+  if (t.node !== tipAnchor || tipEl.hidden || sig !== tipKey) { tipKey = sig; showTip(t.node, t.aid, t.key); }
+}, { passive: true });
+document.addEventListener("mouseleave", hideTip);
+document.addEventListener("focusin", e => { const t = tipTarget(e.target); if (t && e.target.matches(":focus-visible")) showTip(t.node, t.aid, t.key); else hideTip(); });
+document.addEventListener("focusout", () => hideTip());
+window.addEventListener("scroll", () => { if (tipAnchor && !tipEl.hidden) { const t = tipTarget(tipAnchor); if (t && tipAnchor.isConnected) showTip(tipAnchor, t.aid, t.key); else hideTip(); } }, true);
+document.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") hideTip(); });
 
 // ================= routing =================
 function route() {
@@ -936,6 +1052,7 @@ $("#pStart").addEventListener("click", () => startRun());
 // ---- the run ----
 let S = null; // sim state
 function startRun() {
+  hideTip();
   view.simSpec = view.spec;
   const spec = view.spec, dur = +$("#pDur").value, pace = +$("#pDiff").value;
   S = {

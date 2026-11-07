@@ -28,6 +28,7 @@ def compact_spells():
             "talent": s["talent"], "status": s["status"],
             "text": top["text"], "cost": top["cost"], "notes": s.get("notes", ""),
             "confidence": s.get("confidence", "high"),
+            "rk": [[r["level"], r["text"], r["cost"]] for r in s["ranks"]],
         })
     return out
 
