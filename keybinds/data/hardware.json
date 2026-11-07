@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "note": "Input surfaces the keybind planner can assign to. Button counts for the Naga V2 Pro come from Razer's product listing (19+1 programmable buttons with the 12-button plate; 3 swappable side plates: 2/6/12). Tilt-wheel support on the V2 Pro is unconfirmed — modelled as optional.",
+    "modifiers": ["none", "shift", "ctrl", "alt"],
+    "modifierNotes": "Every key/button can carry shift/ctrl/alt in WoW. Razer HyperShift (Synapse) can add a second layer on the mouse itself, but it outputs a different key, so plan it as just more keys."
+  },
+  "mouse": {
+    "model": "Razer Naga V2 Pro",
+    "sidePlate": "6-button",
+    "buttons": [
+      { "id": "M-LMB",   "label": "Left click",        "bindable": false, "notes": "Reserved for camera/targeting/clicking frames." },
+      { "id": "M-RMB",   "label": "Right click",       "bindable": false, "notes": "Reserved for camera/movement." },
+      { "id": "M-MMB",   "label": "Wheel click",       "bindable": true,  "reach": "good" },
+      { "id": "M-WUP",   "label": "Wheel up",          "bindable": true,  "reach": "good", "notes": "No hold/press feel — avoid long-cast spells you may want to cancel." },
+      { "id": "M-WDN",   "label": "Wheel down",        "bindable": true,  "reach": "good" },
+      { "id": "M-TOP1",  "label": "Top button 1 (behind wheel)", "bindable": true, "reach": "ok", "notes": "DPI button by default; remap in Synapse." },
+      { "id": "M-TOP2",  "label": "Top button 2 (behind wheel)", "bindable": true, "reach": "ok" },
+      { "id": "M-S1",    "label": "Side 1 (top row, front)",  "bindable": true, "reach": "best", "row": 1, "col": 1 },
+      { "id": "M-S2",    "label": "Side 2 (top row, middle)", "bindable": true, "reach": "best", "row": 1, "col": 2 },
+      { "id": "M-S3",    "label": "Side 3 (top row, back)",   "bindable": true, "reach": "good", "row": 1, "col": 3 },
+      { "id": "M-S4",    "label": "Side 4 (bottom row, front)",  "bindable": true, "reach": "best", "row": 2, "col": 1 },
+      { "id": "M-S5",    "label": "Side 5 (bottom row, middle)", "bindable": true, "reach": "best", "row": 2, "col": 2 },
+      { "id": "M-S6",    "label": "Side 6 (bottom row, back)",   "bindable": true, "reach": "good", "row": 2, "col": 3 },
+      { "id": "M-TILTL", "label": "Wheel tilt left",  "bindable": true, "optional": true, "reach": "ok", "notes": "Unconfirmed on V2 Pro." },
+      { "id": "M-TILTR", "label": "Wheel tilt right", "bindable": true, "optional": true, "reach": "ok", "notes": "Unconfirmed on V2 Pro." }
+    ]
+  },
+  "keyboard": {
+    "layout": "ANSI",
+    "movement": ["W", "A", "S", "D"],
+    "reachTiers": {
+      "best": ["1", "2", "3", "4", "Q", "E", "R", "F"],
+      "good": ["5", "T", "G", "Z", "X", "C", "V", "`", "Tab", "Caps"],
+      "ok":   ["6", "Y", "H", "B", "F1", "F2", "F3", "F4", "F5"]
+    },
+    "notes": "Assumes WASD movement with strafing on A/D (turning via mouse). If you prefer ESDF, shift the tiers one key right."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "note": "Non-class actions every character needs a key for. Usage uses the same tier names as paladin-spells.json."
+  },
+  "actions": [
+    { "id": "start-attack",     "name": "Auto Attack / Start Attack", "category": "strike",    "usage": { "holy": "situational", "prot": "core", "ret": "core" }, "notes": "Usually folded into Holy Strike / Judgement macros via /startattack." },
+    { "id": "target-nearest",   "name": "Target Nearest Enemy (Tab)", "category": "targeting", "usage": { "holy": "situational", "prot": "core", "ret": "frequent" } },
+    { "id": "assist",           "name": "Assist Target / Target of Target", "category": "targeting", "usage": { "holy": "frequent", "prot": "situational", "ret": "frequent" } },
+    { "id": "target-self",      "name": "Target Self (F1)", "category": "targeting", "usage": { "holy": "frequent", "prot": "situational", "ret": "situational" } },
+    { "id": "target-party",     "name": "Target Party 1–4 (F2–F5)", "category": "targeting", "usage": { "holy": "frequent", "prot": "situational", "ret": "situational" }, "notes": "Less needed if you heal with mouseover macros on raid frames." },
+    { "id": "interact",         "name": "Interact With Target", "category": "utility",   "usage": { "holy": "ooc", "prot": "ooc", "ret": "ooc" } },
+    { "id": "mount",            "name": "Mount", "category": "movement", "usage": { "holy": "ooc", "prot": "ooc", "ret": "ooc" }, "notes": "Paladin class mounts are not trainer spells in Forever — use a mount macro / favourite mount." },
+    { "id": "hearthstone",      "name": "Hearthstone", "category": "ooc", "usage": { "holy": "ooc", "prot": "ooc", "ret": "ooc" } },
+    { "id": "healthstone",      "name": "Healthstone", "category": "consumable", "usage": { "holy": "emergency", "prot": "emergency", "ret": "emergency" } },
+    { "id": "health-potion",    "name": "Healing Potion", "category": "consumable", "usage": { "holy": "emergency", "prot": "emergency", "ret": "emergency" } },
+    { "id": "mana-potion",      "name": "Mana Potion / Dark Rune", "category": "consumable", "usage": { "holy": "cooldown", "prot": "cooldown", "ret": "situational" } },
+    { "id": "trinket-1",        "name": "Trinket 1 (/use 13)", "category": "cooldown", "usage": { "holy": "cooldown", "prot": "cooldown", "ret": "cooldown" } },
+    { "id": "trinket-2",        "name": "Trinket 2 (/use 14)", "category": "cooldown", "usage": { "holy": "cooldown", "prot": "cooldown", "ret": "cooldown" } },
+    { "id": "bandage",          "name": "First Aid Bandage", "category": "consumable", "usage": { "holy": "situational", "prot": "situational", "ret": "situational" } },
+    { "id": "food-drink",       "name": "Eat / Drink", "category": "ooc", "usage": { "holy": "ooc", "prot": "ooc", "ret": "ooc" } },
+    { "id": "stopcasting",      "name": "Stop Casting", "category": "utility", "usage": { "holy": "frequent", "prot": "situational", "ret": "situational" }, "notes": "Healers cancel overheals; can be built into heal macros instead of its own key." },
+    { "id": "camp",             "name": "Camping (Forever profession)", "category": "ooc", "usage": { "holy": "ooc", "prot": "ooc", "ret": "ooc" }, "notes": "New system in Forever; out-of-combat only." }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "race": "Dwarf",
+    "faction": "Alliance",
+    "source": "wowforevertalents.com/racials — WoW Forever client build 1.60.1.70862 (+ hotfixes 2026-11-07)",
+    "note": "Some guides still list 'Mace Specialization' as a Dwarf racial; the client data lists Artisan's Precision instead. Gun Specialization and Frost Resistance were removed."
+  },
+  "racials": [
+    {
+      "id": "stoneform",
+      "name": "Stoneform",
+      "type": "active",
+      "status": "changed",
+      "cooldown": "3 min",
+      "text": "Instantly removes and grants immunity to all Bleed, Poison, and Disease effects, and reduces all Physical damage taken by 10% for 8 sec.",
+      "classicText": "While active, grants immunity to Bleed, Poison, and Disease effects. In addition, Armor increased by 10%. Lasts 8 sec.",
+      "category": "defensive",
+      "usage": { "holy": "cooldown", "prot": "cooldown", "ret": "cooldown" },
+      "notes": "Self-cleanse + tank mitigation. Bind it in the same 'defensive' cluster for all specs."
+    },
+    {
+      "id": "find-treasure",
+      "name": "Find Treasure",
+      "type": "active-toggle",
+      "status": "changed",
+      "text": "Allows the dwarf to sense nearby treasure, making it appear on the minimap and sometimes increase treasure found. Lasts until cancelled.",
+      "category": "ooc",
+      "usage": { "holy": "ooc", "prot": "ooc", "ret": "ooc" },
+      "notes": "Tracking toggle; doesn't need a prime key (minimap menu or a far keyboard key)."
+    },
+    {
+      "id": "artisans-precision",
+      "name": "Artisan's Precision",
+      "type": "passive",
+      "status": "new",
+      "text": "Increases your chance to hit with all spells and attacks by 1%.",
+      "notes": "Passive — no keybind."
+    },
+    {
+      "id": "big-game-hunter",
+      "name": "Big Game Hunter",
+      "type": "passive",
+      "status": "new",
+      "text": "Damage dealt versus Beasts increased by 5%.",
+      "notes": "Passive — no keybind."
+    }
+  ],
+  "removed": ["Gun Specialization", "Frost Resistance"]
+}

@@ -1,0 +1,300 @@
+{
+  "meta": {
+    "name": "Draft v0 — one layout for Holy, Protection and Retribution",
+    "principle": "Every baseline spell keeps the same key in every spec. Only the four FLEX slots change with talents (the 'capstone exceptions'). Shift = a related/cheaper variant of the unmodified key; Ctrl/Alt hold out-of-combat and rarely used spells.",
+    "status": "Starting point for the planner app — expect to iterate after the practice simulator."
+  },
+  "flexSlots": {
+    "FLEX-A": {
+      "holy": "holy-shock",
+      "prot": "holy-shield",
+      "ret": "seal-of-command",
+      "theme": "signature talent button, pressed on cooldown"
+    },
+    "FLEX-B": {
+      "holy": "lights-vigil",
+      "prot": "swift-judgement",
+      "ret": "repentance",
+      "theme": "second talent button"
+    },
+    "FLEX-C": {
+      "holy": "divine-favor",
+      "prot": "templars-bulwark",
+      "ret": null,
+      "theme": "talent cooldown (Ret: free — e.g. Holy Shock for Shockadin builds)"
+    },
+    "FLEX-D": {
+      "holy": "oath-of-light",
+      "prot": null,
+      "ret": null,
+      "theme": "pre-pull talent buff"
+    }
+  },
+  "binds": [
+    {
+      "key": "1",
+      "action": "m-holystrike"
+    },
+    {
+      "key": "Shift-1",
+      "action": "hammer-of-wrath"
+    },
+    {
+      "key": "2",
+      "action": "m-judge-tank"
+    },
+    {
+      "key": "Shift-2",
+      "action": "exorcism"
+    },
+    {
+      "key": "3",
+      "action": "consecration"
+    },
+    {
+      "key": "Shift-3",
+      "action": "holy-wrath"
+    },
+    {
+      "key": "4",
+      "action": "m-hotr"
+    },
+    {
+      "key": "Shift-4",
+      "action": "turn-undead"
+    },
+    {
+      "key": "Q",
+      "action": "FLEX-A"
+    },
+    {
+      "key": "Shift-Q",
+      "action": "seal-of-righteousness"
+    },
+    {
+      "key": "E",
+      "action": "FLEX-B"
+    },
+    {
+      "key": "Shift-E",
+      "action": "seal-of-the-crusader"
+    },
+    {
+      "key": "R",
+      "action": "seal-of-fury"
+    },
+    {
+      "key": "Shift-R",
+      "action": "seal-of-wisdom"
+    },
+    {
+      "key": "Ctrl-R",
+      "action": "seal-of-light"
+    },
+    {
+      "key": "F",
+      "action": "m-hoj"
+    },
+    {
+      "key": "Shift-F",
+      "action": "seal-of-justice"
+    },
+    {
+      "key": "5",
+      "action": "FLEX-C"
+    },
+    {
+      "key": "T",
+      "action": "FLEX-D"
+    },
+    {
+      "key": "Shift-T",
+      "action": "righteous-fury"
+    },
+    {
+      "key": "G",
+      "action": "m-stoneform"
+    },
+    {
+      "key": "Shift-G",
+      "action": "voice-of-truth"
+    },
+    {
+      "key": "Z",
+      "action": "divine-protection"
+    },
+    {
+      "key": "Shift-Z",
+      "action": "divine-shield"
+    },
+    {
+      "key": "X",
+      "action": "m-loh"
+    },
+    {
+      "key": "C",
+      "action": "m-potion"
+    },
+    {
+      "key": "Shift-C",
+      "action": "mana-potion"
+    },
+    {
+      "key": "V",
+      "action": "m-trinkets"
+    },
+    {
+      "key": "Tab",
+      "action": "target-nearest"
+    },
+    {
+      "key": "`",
+      "action": "mount"
+    },
+    {
+      "key": "M-S1",
+      "action": "m-flash"
+    },
+    {
+      "key": "M-S2",
+      "action": "m-holylight"
+    },
+    {
+      "key": "M-S3",
+      "action": "m-freedom"
+    },
+    {
+      "key": "M-S4",
+      "action": "m-cleanse"
+    },
+    {
+      "key": "M-S5",
+      "action": "m-bop"
+    },
+    {
+      "key": "Shift-M-S5",
+      "action": "m-sac"
+    },
+    {
+      "key": "M-S6",
+      "action": "m-stopcast-heal"
+    },
+    {
+      "key": "M-MMB",
+      "action": "assist"
+    },
+    {
+      "key": "M-WUP",
+      "action": "m-blessing"
+    },
+    {
+      "key": "M-WDN",
+      "action": "m-rez"
+    },
+    {
+      "key": "M-TOP1",
+      "action": "divine-intervention"
+    },
+    {
+      "key": "M-TOP2",
+      "action": "hearthstone"
+    },
+    {
+      "key": "Ctrl-1",
+      "action": "devotion-aura"
+    },
+    {
+      "key": "Ctrl-2",
+      "action": "retribution-aura"
+    },
+    {
+      "key": "Ctrl-3",
+      "action": "concentration-aura"
+    },
+    {
+      "key": "Ctrl-4",
+      "action": "shadow-resistance-aura"
+    },
+    {
+      "key": "Ctrl-5",
+      "action": "frost-resistance-aura"
+    },
+    {
+      "key": "Ctrl-6",
+      "action": "fire-resistance-aura"
+    },
+    {
+      "key": "Alt-1",
+      "action": "blessing-of-might"
+    },
+    {
+      "key": "Alt-2",
+      "action": "blessing-of-wisdom"
+    },
+    {
+      "key": "Alt-3",
+      "action": "blessing-of-kings"
+    },
+    {
+      "key": "Alt-Q",
+      "action": "greater-blessing-of-might"
+    },
+    {
+      "key": "Alt-E",
+      "action": "greater-blessing-of-wisdom"
+    },
+    {
+      "key": "Alt-R",
+      "action": "greater-blessing-of-kings"
+    },
+    {
+      "key": "Alt-G",
+      "action": "find-treasure"
+    },
+    {
+      "key": "F1",
+      "action": "target-self"
+    }
+  ],
+  "specHotZones": {
+    "holy": [
+      "M-S1",
+      "M-S2",
+      "M-S4",
+      "Q",
+      "E",
+      "5",
+      "Shift-R",
+      "M-S6"
+    ],
+    "prot": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "Q",
+      "E",
+      "R",
+      "Tab",
+      "5"
+    ],
+    "ret": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "Q",
+      "Shift-Q",
+      "E",
+      "Shift-1",
+      "Shift-2"
+    ]
+  },
+  "lowLevelSubstitutes": {
+    "M-S4": {
+      "untilLevel": 42,
+      "action": "purify",
+      "note": "Edit the Cleanse macro to Purify until level 42."
+    }
+  }
+}
