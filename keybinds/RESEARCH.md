@@ -229,3 +229,19 @@ The exact binding list is in `data/layout-draft.json`. It is a starting point to
 
 1. **Planner app:** a keyboard and Naga visual with drag-and-drop abilities and macros, spec toggle (Holy/Prot/Ret) showing flex slots, coverage warnings for unbound core spells, and export.
 2. **Practice simulator:** prompts like "Tank: taunt the loose add", "Heal: tank at 40%" or a rotation metronome, timed against your binds, to measure reaction time and misses per key.
+
+## Community layouts (researched 7 Nov 2026)
+
+WoW Forever launched on 4 Nov 2026, and no complete paladin bind list had been published by then. The forums, guide sites and videos instead describe a handful of recurring **approaches**. Each one is a preset in `data/presets.json`, adapted to Forever spells and this planner's flex keys. You can load them from the planner's **Community presets** dropdown.
+
+| Preset | Approach | Sources |
+|---|---|---|
+| Naga thumb grid | Rotation and talent buttons on the six side buttons, with Shift + side button as a heal and protection layer. Synapse sends F13–F18 or Ctrl+Numpad so modifiers still work. | [MMO-Champion: Naga 12-button binds](https://www.mmo-champion.com/threads/1497947-What-do-you-keybind-to-a-Naga-12-button-mouse/page2) · [MMO-Champion: Naga Shift binds](https://www.mmo-champion.com/threads/858293-Help-Razor-Naga-Shift-bind-ability) · [WoW Insider: mouseovers + Naga](https://www.engadget.com/2010-06-10-the-magical-alchemy-of-mouseovers-plus-a-razer-naga.html) |
+| Wheel & click healer | Click-casting (Clique) style: mouseover heals on the wheel and wheel click, Shift for BoP, Lay on Hands and Freedom, melee kept on 1–4 | [Blizzard: Holy Paladin Key and Click Configuration Guide](https://us.forums.blizzard.com/en/wow/t/holy-paladin-key-and-click-configuration-guide/842317) · [Blizzard EU: Holy Paladin Keybinds](https://eu.forums.blizzard.com/en/wow/t/holy-paladin-keybinds-what/261991) · [Zockify: Forever paladin macros](https://www.zockify.com/forever/paladin/macros/) |
+| Keyboard-first WASD | Everything on 1–6 and the letters around WASD, with Shift as the second layer and interrupt-type buttons within easy reach. Works with any mouse. | [WoW Insider: key-binding your ret paladin](https://www.engadget.com/2013-03-06-how-to-key-bind-your-retribution-paladin.html) · [Blizzard EU: holy/ret keybinds](https://eu.forums.blizzard.com/en/wow/t/keybinds-problem-holy-ret/112893) · [YouTube: Best WoW Keybinds for Tanks, Healers & DPS](https://www.youtube.com/watch?v=1aIrYKBBZ5w) · [WarcraftMaps: Forever keybinds](https://warcraftmaps.com/guides/keybinds) |
+| Compact modifier macros | Forever macro-site one-button macros: Judgement + Holy Strike together, Consecration (Shift = Righteous Fury), Flash of Light (Shift = Holy Light), BoP (Alt = Divine Protection) | [Classic WoW Forever: paladin macros](https://classicwowforever.com/macros/paladin/) · [RankedBoost](https://rankedboost.com/world-of-warcraft/forever/macros/paladin/) · [WOWF.IO](https://wowf.io/en/macros/paladin) · [Zockify](https://www.zockify.com/forever/paladin/macros/) |
+
+Notes:
+- Most Naga and click-healing threads are years old, and their spell names predate Forever. The approaches carry over, but the exact spells don't.
+- The Judgement + Holy Strike macro relies on Judgement being off the global cooldown, as it is in Classic-era clients. Check this in Forever before relying on it.
+- Reddit and YouTube pages couldn't be read directly from this environment. Their content was gathered through web search.

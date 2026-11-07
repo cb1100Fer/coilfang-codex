@@ -1,0 +1,447 @@
+{
+ "meta": {
+  "note": "Community-style presets. Each one follows a keybinding approach documented in forum threads, guides or videos, adapted to WoW Forever paladin spells and to this planner's flex-slot system. They are not copies of any one player's exact binds: no complete WoW Forever paladin bind list had been published as of 2026-11-07.",
+  "researched": "2026-11-07"
+ },
+ "presets": [
+  {
+   "id": "naga-thumb-grid",
+   "name": "Naga thumb grid",
+   "style": "MMO mouse",
+   "summary": "Everything you press every pull sits on the six side buttons; Shift + side button is the heal and protection layer. The keyboard keeps Seals, utility and panic buttons.",
+   "approach": [
+    "Core rotation and flex talents on the thumb (side buttons 1–6).",
+    "Shift + thumb = second bar: mouseover heals, Cleanse, BoP, Freedom.",
+    "Seals on 1–5 so swapping a Seal never moves your thumb.",
+    "Set the Naga to send keys WoW can take modifiers on (Synapse: F13–F18 or Ctrl+Numpad), as forum users recommend."
+   ],
+   "inspiredBy": [
+    {
+     "title": "What do you keybind to a Naga 12 button mouse? (MMO-Champion)",
+     "url": "https://www.mmo-champion.com/threads/1497947-What-do-you-keybind-to-a-Naga-12-button-mouse/page2"
+    },
+    {
+     "title": "Help: Razer Naga Shift bind ability? (MMO-Champion)",
+     "url": "https://www.mmo-champion.com/threads/858293-Help-Razor-Naga-Shift-bind-ability"
+    },
+    {
+     "title": "The magical alchemy of mouseovers plus a Razer Naga (WoW Insider)",
+     "url": "https://www.engadget.com/2010-06-10-the-magical-alchemy-of-mouseovers-plus-a-razer-naga.html"
+    }
+   ],
+   "binds": {
+    "Ctrl-1": "devotion-aura",
+    "Ctrl-2": "retribution-aura",
+    "Ctrl-3": "concentration-aura",
+    "Ctrl-4": "shadow-resistance-aura",
+    "Ctrl-5": "frost-resistance-aura",
+    "Ctrl-6": "fire-resistance-aura",
+    "Alt-1": "blessing-of-might",
+    "Alt-2": "blessing-of-wisdom",
+    "Alt-3": "blessing-of-kings",
+    "Alt-Q": "greater-blessing-of-might",
+    "Alt-E": "greater-blessing-of-wisdom",
+    "Alt-R": "greater-blessing-of-kings",
+    "Alt-G": "find-treasure",
+    "`": "mount",
+    "F1": "target-self",
+    "M-TOP1": "divine-intervention",
+    "M-TOP2": "hearthstone",
+    "M-S1": "m-holystrike",
+    "M-S2": "m-judge-tank",
+    "M-S3": "consecration",
+    "M-S4": "FLEX-A",
+    "M-S5": "FLEX-B",
+    "M-S6": "m-hotr",
+    "Shift-M-S1": "m-flash",
+    "Shift-M-S2": "m-holylight",
+    "Shift-M-S3": "m-cleanse",
+    "Shift-M-S4": "FLEX-C",
+    "Shift-M-S5": "m-bop",
+    "Shift-M-S6": "m-freedom",
+    "1": "seal-of-fury",
+    "2": "seal-of-righteousness",
+    "3": "seal-of-wisdom",
+    "4": "seal-of-the-crusader",
+    "5": "seal-of-light",
+    "Shift-5": "seal-of-justice",
+    "Q": "m-hoj",
+    "E": "m-stoneform",
+    "R": "exorcism",
+    "Shift-R": "holy-wrath",
+    "F": "hammer-of-wrath",
+    "Shift-F": "turn-undead",
+    "T": "FLEX-D",
+    "Shift-T": "righteous-fury",
+    "G": "voice-of-truth",
+    "Z": "divine-protection",
+    "Shift-Z": "divine-shield",
+    "X": "m-loh",
+    "C": "m-potion",
+    "Shift-C": "mana-potion",
+    "V": "m-trinkets",
+    "Shift-Q": "m-sac",
+    "Shift-E": "m-stopcast-heal",
+    "Tab": "target-nearest",
+    "M-MMB": "assist",
+    "M-WUP": "m-blessing",
+    "M-WDN": "m-rez",
+    "F2": "target-party"
+   },
+   "flex": {
+    "FLEX-A": {
+     "holy": "holy-shock",
+     "prot": "holy-shield",
+     "ret": "seal-of-command"
+    },
+    "FLEX-B": {
+     "holy": "lights-vigil",
+     "prot": "swift-judgement",
+     "ret": "repentance"
+    },
+    "FLEX-C": {
+     "holy": "divine-favor",
+     "prot": "templars-bulwark",
+     "ret": null
+    },
+    "FLEX-D": {
+     "holy": "oath-of-light",
+     "prot": null,
+     "ret": null
+    }
+   }
+  },
+  {
+   "id": "wheel-click-healer",
+   "name": "Wheel & click healer",
+   "style": "Healer-first",
+   "summary": "Heals ride the mouse wheel and wheel click while you hover party frames, the way click-casting (Clique) healers work. Melee stays on 1–4 so Protection and Retribution still feel normal.",
+   "approach": [
+    "Wheel up = Flash of Light, wheel down = Holy Light, wheel click = Cleanse, all mouseover.",
+    "Shift + wheel = Blessing of Protection, Lay on Hands, Freedom.",
+    "Talent buttons on the thumb (side 1–3) so Holy Shock and Light's Vigil sit beside the heals.",
+    "Left/right click stay free for targeting and camera (this planner can't bind them; with Clique you could)."
+   ],
+   "inspiredBy": [
+    {
+     "title": "Holy Paladin Key and Click Configuration Guide (Blizzard forums)",
+     "url": "https://us.forums.blizzard.com/en/wow/t/holy-paladin-key-and-click-configuration-guide/842317"
+    },
+    {
+     "title": "Holy Paladin Keybinds (What!?!?) (Blizzard EU forums)",
+     "url": "https://eu.forums.blizzard.com/en/wow/t/holy-paladin-keybinds-what/261991"
+    },
+    {
+     "title": "WoW Forever Paladin macros: mouse-wheel healing (Zockify)",
+     "url": "https://www.zockify.com/forever/paladin/macros/"
+    }
+   ],
+   "binds": {
+    "Ctrl-1": "devotion-aura",
+    "Ctrl-2": "retribution-aura",
+    "Ctrl-3": "concentration-aura",
+    "Ctrl-4": "shadow-resistance-aura",
+    "Ctrl-5": "frost-resistance-aura",
+    "Ctrl-6": "fire-resistance-aura",
+    "Alt-1": "blessing-of-might",
+    "Alt-2": "blessing-of-wisdom",
+    "Alt-3": "blessing-of-kings",
+    "Alt-Q": "greater-blessing-of-might",
+    "Alt-E": "greater-blessing-of-wisdom",
+    "Alt-R": "greater-blessing-of-kings",
+    "Alt-G": "find-treasure",
+    "`": "mount",
+    "F1": "target-self",
+    "M-TOP1": "assist",
+    "M-TOP2": "hearthstone",
+    "M-WUP": "m-flash",
+    "M-WDN": "m-holylight",
+    "M-MMB": "m-cleanse",
+    "Shift-M-WUP": "m-bop",
+    "Shift-M-WDN": "m-loh",
+    "Shift-M-MMB": "m-freedom",
+    "M-S1": "FLEX-A",
+    "M-S2": "FLEX-B",
+    "M-S3": "FLEX-C",
+    "M-S4": "m-sac",
+    "M-S5": "m-stopcast-heal",
+    "M-S6": "FLEX-D",
+    "1": "m-holystrike",
+    "2": "m-judge-tank",
+    "3": "consecration",
+    "4": "m-hotr",
+    "Shift-1": "hammer-of-wrath",
+    "Shift-2": "exorcism",
+    "Shift-3": "holy-wrath",
+    "Shift-4": "turn-undead",
+    "Q": "m-hoj",
+    "E": "m-stoneform",
+    "R": "seal-of-fury",
+    "Shift-R": "seal-of-wisdom",
+    "Ctrl-R": "seal-of-light",
+    "F": "seal-of-righteousness",
+    "Shift-F": "seal-of-the-crusader",
+    "Ctrl-F": "seal-of-justice",
+    "T": "righteous-fury",
+    "G": "voice-of-truth",
+    "Z": "divine-protection",
+    "Shift-Z": "divine-shield",
+    "X": "lay-on-hands",
+    "C": "m-potion",
+    "Shift-C": "mana-potion",
+    "V": "m-trinkets",
+    "Tab": "target-nearest",
+    "F2": "target-party",
+    "5": "m-blessing",
+    "Shift-5": "m-rez",
+    "Alt-Z": "divine-intervention"
+   },
+   "flex": {
+    "FLEX-A": {
+     "holy": "holy-shock",
+     "prot": "holy-shield",
+     "ret": "seal-of-command"
+    },
+    "FLEX-B": {
+     "holy": "lights-vigil",
+     "prot": "swift-judgement",
+     "ret": "repentance"
+    },
+    "FLEX-C": {
+     "holy": "divine-favor",
+     "prot": "templars-bulwark",
+     "ret": null
+    },
+    "FLEX-D": {
+     "holy": "oath-of-light",
+     "prot": null,
+     "ret": null
+    }
+   }
+  },
+  {
+   "id": "keyboard-wasd",
+   "name": "Keyboard-first WASD",
+   "style": "Keyboard only",
+   "summary": "The classic YouTube and guide-site layout: every combat button on 1–6 and the letters around WASD, with Shift as the second layer. The mouse is only for the wheel, so it works with any mouse.",
+   "approach": [
+    "Most-pressed abilities closest to your movement fingers (1–4, Q, E, R, F).",
+    "Interrupt-style buttons (Hammer of Justice) kept within easy reach, not on far keys like V or B.",
+    "Shift = related variant of the same key; Ctrl/Alt for auras, blessings and out-of-combat.",
+    "Turn with the mouse so A/D strafe and your left hand never leaves the cluster."
+   ],
+   "inspiredBy": [
+    {
+     "title": "How to key-bind your retribution paladin (WoW Insider / Engadget)",
+     "url": "https://www.engadget.com/2013-03-06-how-to-key-bind-your-retribution-paladin.html"
+    },
+    {
+     "title": "Keybinds problem - holy/ret (Blizzard EU forums)",
+     "url": "https://eu.forums.blizzard.com/en/wow/t/keybinds-problem-holy-ret/112893"
+    },
+    {
+     "title": "The Best World of Warcraft Keybinds For Tanks, Healers & DPS (YouTube)",
+     "url": "https://www.youtube.com/watch?v=1aIrYKBBZ5w"
+    },
+    {
+     "title": "Keybinds for WoW Forever (WarcraftMaps)",
+     "url": "https://warcraftmaps.com/guides/keybinds"
+    }
+   ],
+   "binds": {
+    "Ctrl-1": "devotion-aura",
+    "Ctrl-2": "retribution-aura",
+    "Ctrl-3": "concentration-aura",
+    "Ctrl-4": "shadow-resistance-aura",
+    "Ctrl-5": "frost-resistance-aura",
+    "Ctrl-6": "fire-resistance-aura",
+    "Alt-1": "blessing-of-might",
+    "Alt-2": "blessing-of-wisdom",
+    "Alt-3": "blessing-of-kings",
+    "Alt-Q": "greater-blessing-of-might",
+    "Alt-E": "greater-blessing-of-wisdom",
+    "Alt-R": "greater-blessing-of-kings",
+    "Alt-G": "find-treasure",
+    "`": "mount",
+    "F1": "target-self",
+    "M-TOP1": "divine-intervention",
+    "M-TOP2": "hearthstone",
+    "1": "m-holystrike",
+    "2": "m-judge-tank",
+    "3": "consecration",
+    "4": "m-hotr",
+    "5": "exorcism",
+    "6": "hammer-of-wrath",
+    "Q": "FLEX-A",
+    "E": "FLEX-B",
+    "R": "seal-of-fury",
+    "F": "m-flash",
+    "G": "m-holylight",
+    "T": "FLEX-C",
+    "Shift-T": "FLEX-D",
+    "Z": "m-cleanse",
+    "X": "m-hoj",
+    "C": "m-stoneform",
+    "V": "divine-shield",
+    "Shift-V": "divine-protection",
+    "B": "m-loh",
+    "H": "m-bop",
+    "Y": "m-freedom",
+    "Shift-1": "holy-wrath",
+    "Shift-3": "turn-undead",
+    "Shift-Q": "seal-of-righteousness",
+    "Shift-E": "seal-of-the-crusader",
+    "Shift-R": "seal-of-wisdom",
+    "Ctrl-R": "seal-of-light",
+    "Shift-F": "seal-of-justice",
+    "Shift-G": "m-stopcast-heal",
+    "Shift-Z": "m-sac",
+    "Shift-X": "voice-of-truth",
+    "Shift-C": "m-potion",
+    "Ctrl-C": "mana-potion",
+    "7": "m-trinkets",
+    "Caps": "righteous-fury",
+    "Tab": "target-nearest",
+    "M-MMB": "assist",
+    "M-WUP": "m-blessing",
+    "M-WDN": "m-rez",
+    "F2": "target-party"
+   },
+   "flex": {
+    "FLEX-A": {
+     "holy": "holy-shock",
+     "prot": "holy-shield",
+     "ret": "seal-of-command"
+    },
+    "FLEX-B": {
+     "holy": "lights-vigil",
+     "prot": "swift-judgement",
+     "ret": "repentance"
+    },
+    "FLEX-C": {
+     "holy": "divine-favor",
+     "prot": "templars-bulwark",
+     "ret": null
+    },
+    "FLEX-D": {
+     "holy": "oath-of-light",
+     "prot": null,
+     "ret": null
+    }
+   }
+  },
+  {
+   "id": "compact-modifier-macros",
+   "name": "Compact modifier macros",
+   "style": "Fewest keys",
+   "summary": "Built from the one-button macros WoW Forever macro sites share: Judgement + Holy Strike on one key, Consecration with Shift for Righteous Fury, Flash of Light with Shift for Holy Light, BoP with Alt for Divine Protection. Fewer keys, more modifiers.",
+   "approach": [
+    "One press fires Judgement and Holy Strike together (verify the global cooldown in game).",
+    "Shift turns a key into its partner spell, so related spells share a finger.",
+    "Defensives that share Forbearance live on one key.",
+    "Leaves many keys free: good if you prefer a small, memorable set."
+   ],
+   "inspiredBy": [
+    {
+     "title": "WoW Forever Paladin macros (Classic WoW Forever)",
+     "url": "https://classicwowforever.com/macros/paladin/"
+    },
+    {
+     "title": "WoW Forever Paladin Macros (RankedBoost)",
+     "url": "https://rankedboost.com/world-of-warcraft/forever/macros/paladin/"
+    },
+    {
+     "title": "WoW Forever Paladin Macros (WOWF.IO)",
+     "url": "https://wowf.io/en/macros/paladin"
+    },
+    {
+     "title": "WoW Forever Paladin Macros: Mouseover, Combat & Utility (Zockify)",
+     "url": "https://www.zockify.com/forever/paladin/macros/"
+    }
+   ],
+   "binds": {
+    "Ctrl-1": "devotion-aura",
+    "Ctrl-2": "retribution-aura",
+    "Ctrl-3": "holy-wrath",
+    "Ctrl-4": "shadow-resistance-aura",
+    "Ctrl-5": "frost-resistance-aura",
+    "Ctrl-6": "fire-resistance-aura",
+    "Alt-1": "blessing-of-might",
+    "Alt-2": "blessing-of-wisdom",
+    "Alt-3": "blessing-of-kings",
+    "Alt-Q": "greater-blessing-of-might",
+    "Alt-E": "greater-blessing-of-wisdom",
+    "Alt-R": "greater-blessing-of-kings",
+    "Alt-G": "find-treasure",
+    "`": "mount",
+    "F1": "target-self",
+    "M-TOP1": "divine-intervention",
+    "M-TOP2": "hearthstone",
+    "1": "m-strike-judge",
+    "2": "m-cons-rf",
+    "Shift-2": "m-cons-rf",
+    "3": "m-hotr",
+    "5": "m-judge-tank",
+    "Q": "FLEX-A",
+    "E": "FLEX-B",
+    "R": "seal-of-fury",
+    "Shift-R": "seal-of-wisdom",
+    "Ctrl-R": "seal-of-light",
+    "4": "seal-of-righteousness",
+    "Shift-4": "seal-of-the-crusader",
+    "Shift-5": "seal-of-justice",
+    "F": "m-hoj",
+    "T": "FLEX-C",
+    "Shift-T": "FLEX-D",
+    "G": "m-stoneform",
+    "Shift-G": "voice-of-truth",
+    "Z": "m-defensive",
+    "Shift-Z": "m-defensive",
+    "X": "m-loh",
+    "C": "m-potion",
+    "Shift-C": "m-potion",
+    "Ctrl-C": "mana-potion",
+    "V": "m-trinkets",
+    "Shift-V": "m-trinkets",
+    "Shift-1": "hammer-of-wrath",
+    "Shift-3": "exorcism",
+    "6": "turn-undead",
+    "M-S1": "m-heal-shift",
+    "Shift-M-S1": "m-heal-shift",
+    "M-S2": "m-cleanse",
+    "M-S3": "m-bop-dp",
+    "Alt-M-S3": "m-bop-dp",
+    "M-S4": "m-sac",
+    "M-S5": "m-freedom",
+    "M-S6": "m-stopcast-heal",
+    "Tab": "target-nearest",
+    "M-MMB": "assist",
+    "M-WUP": "m-blessing",
+    "M-WDN": "m-rez",
+    "F2": "target-party"
+   },
+   "flex": {
+    "FLEX-A": {
+     "holy": "holy-shock",
+     "prot": "holy-shield",
+     "ret": "seal-of-command"
+    },
+    "FLEX-B": {
+     "holy": "lights-vigil",
+     "prot": "swift-judgement",
+     "ret": "repentance"
+    },
+    "FLEX-C": {
+     "holy": "divine-favor",
+     "prot": "templars-bulwark",
+     "ret": null
+    },
+    "FLEX-D": {
+     "holy": "oath-of-light",
+     "prot": null,
+     "ret": null
+    }
+   }
+  }
+ ]
+}

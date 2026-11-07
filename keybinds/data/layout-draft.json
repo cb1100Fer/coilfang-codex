@@ -254,6 +254,10 @@
     {
       "key": "F1",
       "action": "target-self"
+    },
+    {
+      "key": "F2",
+      "action": "target-party"
     }
   ],
   "specHotZones": {

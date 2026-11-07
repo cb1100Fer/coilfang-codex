@@ -178,6 +178,10 @@ header.top .sub { color: var(--fg-soft); font-size: 14px; margin-top: 2px; }
 .layouts .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .toast { font-size: 13px; color: var(--core); min-height: 1.2em; }
 details > summary { cursor: pointer; font-weight: 600; }
+.preset-card { margin-top: 12px; border: 1px solid var(--line); border-left: 3px solid var(--gold); border-radius: 0 10px 10px 0; padding: 10px 12px; display: grid; gap: 6px; font-size: 14px; }
+.preset-card ul { margin: 0; padding-left: 18px; display: grid; gap: 2px; }
+.preset-card a { color: var(--fg); }
+.preset-card .src { font-size: 12.5px; color: var(--fg-soft); }
 .foot { margin-top: 18px; font-size: 12px; color: var(--fg-soft); max-width: 70ch; }
 .pick-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--fg); color: var(--surface);
   padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px));
@@ -321,6 +325,7 @@ details > summary { cursor: pointer; font-weight: 600; }
     </div>
     <label class="ctl" for="lvl">Level <input type="range" id="lvl" min="1" max="60" value="60"><output id="lvlOut" for="lvl">60</output></label>
     <label class="ctl" for="laySelTop">Layout <select id="laySelTop"></select></label>
+    <label class="ctl" for="presetSel">Community presets <select id="presetSel"></select></label>
   </div>
 
   <!-- PLAN -->
@@ -368,6 +373,7 @@ details > summary { cursor: pointer; font-weight: 600; }
         <button class="btn danger" type="button" id="layDel">Delete</button>
       </div>
       <div id="layConfirm" class="btn-row" hidden></div>
+      <div id="presetCard" class="preset-card" hidden></div>
       <details style="margin-top:12px">
         <summary>Export / import</summary>
         <div class="btn-row">
@@ -781,6 +787,7 @@ function render() {
 
 // ================= layouts =================
 function renderLayouts() {
+  renderPresetCard();
   ["#laySel", "#laySelTop"].forEach(sel => { const s = $(sel); s.replaceChildren();
     Object.keys(store.layouts).forEach(n => s.append(el("option", { value: n, text: n, selected: n === store.current }))); });
 }
@@ -923,6 +930,35 @@ document.addEventListener("focusout", () => hideTip());
 window.addEventListener("scroll", () => { if (tipAnchor && !tipEl.hidden) { const t = tipTarget(tipAnchor); if (t && tipAnchor.isConnected) showTip(tipAnchor, t.aid, t.key); else hideTip(); } }, true);
 document.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") hideTip(); });
 
+// ================= community presets =================
+const PRESETS = DATA.presets || [];
+function renderPresetSel() {
+  const s = $("#presetSel"); s.replaceChildren(el("option", { value: "", text: "Load a preset…" }));
+  s.append(el("option", { value: "__draft", text: "Draft v0 (this project)" }));
+  PRESETS.forEach(p => s.append(el("option", { value: p.id, text: `${p.name} · ${p.style}` })));
+  s.value = "";
+}
+function loadPreset(pid) {
+  let src, name;
+  if (pid === "__draft") { src = draftLayout(); name = "Draft v0"; src.preset = null; }
+  else { const p = PRESETS.find(x => x.id === pid); if (!p) return; src = { binds: { ...p.binds }, flex: JSON.parse(JSON.stringify(p.flex)), preset: p.id }; name = p.name; }
+  let n = name; let i = 2; while (store.layouts[n]) n = `${name} (${i++})`;
+  store.layouts[n] = src; store.current = n; changed();
+  toast(`Loaded “${n}” as a new layout. Your other layouts are untouched.`);
+  if (view.tab === "plan") $("#presetCard").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+$("#presetSel").addEventListener("change", e => { const v = e.target.value; if (v) loadPreset(v); e.target.value = ""; });
+function renderPresetCard() {
+  const c = $("#presetCard"); const p = PRESETS.find(x => x.id === L().preset);
+  c.hidden = !p; if (!p) return;
+  c.replaceChildren(
+    el("div", { class: "eyebrow", text: `Community preset · ${p.style}` }),
+    el("h3", { text: p.name }), el("div", { text: p.summary }),
+    el("ul", {}, p.approach.map(x => el("li", { text: x }))),
+    el("div", { class: "src" }, "Based on: ", ...p.inspiredBy.flatMap((s, i) => [i ? " · " : "", el("a", { href: s.url, target: "_blank", rel: "noopener", text: s.title })])),
+    el("div", { class: "src", text: "Adapted to WoW Forever spells and this planner's flex keys; not a copy of one player's exact binds. Edit freely: it's your copy." }));
+}
+
 // ================= routing =================
 function route() {
   view.tab = location.hash === "#practice" ? "practice" : "plan";
@@ -980,7 +1016,7 @@ window.addEventListener("wheel", e => { if (learning) { e.preventDefault(); lear
 
 // ---- sim ability model ----
 const parseSec = (s, re) => { const m = (s || "").match(re); if (!m) return 0; const v = parseFloat(m[1]); return m[2].startsWith("min") ? v * 60 : m[2].startsWith("hr") ? v * 3600 : v; };
-const OFF_GCD = new Set(["divine-favor", "stoneform", "healthstone", "health-potion", "mana-potion", "trinket-1", "trinket-2", "stopcasting", "target-self", "target-party", "target-nearest", "assist", "start-attack", "interact", "swift-judgement"]);
+const OFF_GCD = new Set(["divine-favor", "stoneform", "healthstone", "health-potion", "mana-potion", "trinket-1", "trinket-2", "stopcasting", "target-self", "target-party", "target-nearest", "assist", "start-attack", "interact", "swift-judgement", "judgement"]);
 const ITEM_CD = { healthstone: 120, "health-potion": 120, "mana-potion": 120, "trinket-1": 90, "trinket-2": 120 };
 function simInfo(id) {
   const a = byId[id]; const cost = a?.cost || "";
@@ -1003,8 +1039,12 @@ const MACRO_FX = {
   "m-favor": () => "divine-favor+holy-light",
   "m-stopcast-heal": () => "stopcast+flash-of-light",
   "m-salv-cancel": () => "noop",
+  "m-strike-judge": () => "judgement+holy-strike",
+  "m-heal-shift": m => m.shift ? "holy-light" : "flash-of-light",
+  "m-cons-rf": m => m.shift ? "righteous-fury" : "consecration",
+  "m-bop-dp": m => m.alt ? "divine-protection" : "blessing-of-protection",
 };
-const MOUSEOVER = new Set(["m-flash", "m-holylight", "m-holyshock", "m-vigil", "m-oath", "m-favor", "m-cleanse", "m-stopcast-heal", "m-bop", "m-freedom", "m-sac", "m-loh", "m-rez"]);
+const MOUSEOVER = new Set(["m-flash", "m-holylight", "m-holyshock", "m-vigil", "m-oath", "m-favor", "m-cleanse", "m-stopcast-heal", "m-bop", "m-freedom", "m-sac", "m-loh", "m-rez", "m-heal-shift", "m-bop-dp"]);
 
 // ---- events (prompts that test reaction to a situation) ----
 const EVENTS = [
@@ -1378,7 +1418,9 @@ function spawnEvent() {
 }
 function keysForSpell(id) {
   const ks = [];
-  for (const [k, v] of Object.entries(L().binds)) { const a = resolve(v, S.spec); if (!a) continue; if (fxIds(a).includes(id) || (a.kind === "macro" && MACRO_FX[a.id] && [MACRO_FX[a.id]({ shift: k.startsWith("Shift") }), MACRO_FX[a.id]({ shift: true })].some(f => f.split("+").includes(id)))) ks.push(k); }
+  for (const [k, v] of Object.entries(L().binds)) { const a = resolve(v, S.spec); if (!a) continue; const m = { shift: k.startsWith("Shift-"), ctrl: k.startsWith("Ctrl-"), alt: k.startsWith("Alt-") };
+    const hit = a.kind === "macro" && MACRO_FX[a.id] ? MACRO_FX[a.id](m).split("+").includes(id) : fxIds(a).includes(id);
+    if (hit) ks.push(k); }
   return [...new Set(ks)];
 }
 function resolveEvent(id, k) {
@@ -1533,6 +1575,7 @@ async function flush() {
 function validStore(s) { return s && typeof s === "object" && s.layouts && typeof s.layouts === "object" && Object.keys(s.layouts).length && s.layouts[s.current]; }
 function adopt(s) { store = s; if (!Array.isArray(store.runs)) store.runs = []; }
 try { const s = JSON.parse(localStorage.getItem("lk-store") || "null"); if (validStore(s)) adopt(s); } catch (e) {}
+renderPresetSel();
 route();
 setSave("local", "Saved in this browser only");
 

@@ -48,6 +48,7 @@ def main():
         } for a in load("general-actions.json")["actions"]],
         "macros": load("macros.json")["macros"],
         "layout": load("layout-draft.json"),
+        "presets": load("presets.json")["presets"],
         "hardware": load("hardware.json"),
     }
     blob = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")

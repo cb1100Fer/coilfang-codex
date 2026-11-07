@@ -351,6 +351,70 @@
    "verify": true,
    "body": "/cancelaura Salvation\n/cancelaura Mass Salvation",
    "why": "Only relevant if Salvation/Mass Salvation exist live (Blizzard announced them; current client data doesn't list them)."
+  },
+  {
+   "id": "m-strike-judge",
+   "name": "Judgement + Holy Strike (one button)",
+   "roles": [
+    "prot",
+    "ret"
+   ],
+   "replaces": "holy-strike",
+   "covers": [
+    "judgement",
+    "start-attack"
+   ],
+   "verify": true,
+   "body": "#showtooltip Holy Strike\n/startattack\n/cast Judgement\n/cast Holy Strike",
+   "why": "Common on WoW Forever macro sites: fires Judgement whenever it's ready and Holy Strike in the same press. Judgement is off the global cooldown in Classic-era clients; confirm in Forever.",
+   "source": "https://classicwowforever.com/macros/paladin/"
+  },
+  {
+   "id": "m-heal-shift",
+   "name": "Mouseover Flash of Light (shift = Holy Light)",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "flash-of-light",
+   "covers": [
+    "holy-light"
+   ],
+   "body": "#showtooltip\n/cast [mod:shift,@mouseover,help,nodead][mod:shift,help,nodead][mod:shift,@player] Holy Light; [@mouseover,help,nodead][help,nodead][@player] Flash of Light",
+   "why": "Two heals on one button: tap for Flash of Light, hold Shift for Holy Light. Seen on WoW Forever macro pages.",
+   "source": "https://www.zockify.com/forever/paladin/macros/"
+  },
+  {
+   "id": "m-cons-rf",
+   "name": "Consecration (shift = Righteous Fury)",
+   "roles": [
+    "prot",
+    "ret"
+   ],
+   "replaces": "consecration",
+   "covers": [
+    "righteous-fury"
+   ],
+   "body": "#showtooltip\n/cast [mod:shift] Righteous Fury; Consecration",
+   "why": "Hold Shift before a pull to turn on Righteous Fury, press normally for Consecration.",
+   "source": "https://classicwowforever.com/macros/paladin/"
+  },
+  {
+   "id": "m-bop-dp",
+   "name": "Mouseover BoP (alt = Divine Protection on self)",
+   "roles": [
+    "holy",
+    "prot",
+    "ret"
+   ],
+   "replaces": "blessing-of-protection",
+   "covers": [
+    "divine-protection"
+   ],
+   "body": "#showtooltip\n/cast [mod:alt] Divine Protection; [@mouseover,help,nodead][help,nodead][@player] Blessing of Protection",
+   "why": "Both share Forbearance, so they live on one key: Blessing of Protection on whoever you hover, Alt for your own Divine Protection.",
+   "source": "https://classicwowforever.com/macros/paladin/"
   }
  ]
 }
