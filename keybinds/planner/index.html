@@ -4,26 +4,16 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-/* Layout: a planning bench. Spec + layer controls on top, the keyboard and Naga
-   side by side as the "board", the ability palette as a drawer you pick from. */
+/* Layout: a planning bench. Plan tab = keyboard + Naga board with side panels;
+   Practice tab = setup cards, then a full-screen arena that reads your real keys. */
 :root {
-  --bg: #eef0f3;
-  --surface: #ffffff;
-  --surface-2: #e3e7ec;
-  --line: #c9cfd8;
-  --fg: #1c2230;
-  --fg-soft: #586173;
-  --gold: #a77a12;
-  --gold-soft: #f3e3b8;
-  --holy: #b98a12;
-  --prot: #2f64a8;
-  --ret: #b23a3a;
-  --core: #1f7a4d;
-  --warn: #b5651d;
-  --crit: #b23a3a;
-  --key-bg: #fbfcfd;
-  --key-edge: #b8c0cc;
+  --bg: #eef0f3; --surface: #ffffff; --surface-2: #e3e7ec; --line: #c9cfd8;
+  --fg: #1c2230; --fg-soft: #586173; --gold: #a77a12; --gold-soft: #f3e3b8;
+  --holy: #b98a12; --prot: #2f64a8; --ret: #b23a3a;
+  --core: #1f7a4d; --warn: #b5651d; --crit: #b23a3a; --mana: #2f64a8;
+  --key-bg: #fbfcfd; --key-edge: #b8c0cc;
   --shadow: 0 1px 0 var(--key-edge), 0 2px 6px rgba(28,34,48,.08);
+  --scrim: rgba(18,21,28,.45);
   --f-display: "Marcellus", "Trajan Pro", Georgia, serif;
   --f-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -31,28 +21,30 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #12151c; --surface: #1a1f29; --surface-2: #232a36; --line: #333c4b;
   --fg: #e6e9ef; --fg-soft: #9aa4b5; --gold: #e2b64b; --gold-soft: #3c3220;
-  --holy: #e2b64b; --prot: #6b9be0; --ret: #e06b6b; --core: #4fc58a; --warn: #e3a05a; --crit: #ef7a7a;
+  --holy: #e2b64b; --prot: #6b9be0; --ret: #e06b6b; --core: #4fc58a; --warn: #e3a05a; --crit: #ef7a7a; --mana: #6b9be0;
   --key-bg: #202734; --key-edge: #0b0e13; --shadow: 0 2px 0 var(--key-edge), 0 3px 8px rgba(0,0,0,.35);
-  color-scheme: dark; } }
+  --scrim: rgba(0,0,0,.6); color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #12151c; --surface: #1a1f29; --surface-2: #232a36; --line: #333c4b;
   --fg: #e6e9ef; --fg-soft: #9aa4b5; --gold: #e2b64b; --gold-soft: #3c3220;
-  --holy: #e2b64b; --prot: #6b9be0; --ret: #e06b6b; --core: #4fc58a; --warn: #e3a05a; --crit: #ef7a7a;
+  --holy: #e2b64b; --prot: #6b9be0; --ret: #e06b6b; --core: #4fc58a; --warn: #e3a05a; --crit: #ef7a7a; --mana: #6b9be0;
   --key-bg: #202734; --key-edge: #0b0e13; --shadow: 0 2px 0 var(--key-edge), 0 3px 8px rgba(0,0,0,.35);
-  color-scheme: dark;
+  --scrim: rgba(0,0,0,.6); color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.45; }
-.wrap { max-width: 1280px; margin: 0 auto; padding-block: 18px 120px;
+.wrap { max-width: 1280px; margin: 0 auto; padding-block: 18px 60px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 h1 { font-family: var(--f-display); font-weight: 400; font-size: 28px; margin: 0; letter-spacing: .02em; text-wrap: balance; }
 h2 { font-family: var(--f-display); font-weight: 400; font-size: 19px; margin: 0; letter-spacing: .02em; }
+h3 { font-family: var(--f-display); font-weight: 400; font-size: 18px; margin: 0; }
 .eyebrow { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-soft); font-weight: 700; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.muted { color: var(--fg-soft); font-size: 13px; }
 
-header.top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; margin-bottom: 16px; }
+header.top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; justify-content: space-between; margin-bottom: 14px; }
 header.top .sub { color: var(--fg-soft); font-size: 14px; margin-top: 2px; }
 .save-state { font-size: 13px; color: var(--fg-soft); display: flex; align-items: center; gap: 6px; }
 .save-state .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--fg-soft); }
@@ -60,8 +52,12 @@ header.top .sub { color: var(--fg-soft); font-size: 14px; margin-top: 2px; }
 .save-state[data-s="saving"] .dot { background: var(--gold); }
 .save-state[data-s="local"] .dot { background: var(--warn); }
 
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+.tabs a { padding: 8px 14px; text-decoration: none; color: var(--fg-soft); font-weight: 700; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.tabs a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--gold); }
+
 .controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; flex-wrap: wrap; }
 .seg button { border: 0; background: transparent; padding: 7px 12px; font-weight: 600; font-size: 14px; color: var(--fg-soft); }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button[aria-pressed="true"] { background: var(--surface-2); color: var(--fg); }
@@ -79,6 +75,7 @@ header.top .sub { color: var(--fg-soft); font-size: 14px; margin-top: 2px; }
 .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 12px; color: var(--fg-soft); }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+.side { display: grid; gap: 14px; }
 
 /* keyboard */
 .kb-scroll { overflow-x: auto; padding-bottom: 4px; }
@@ -86,10 +83,11 @@ header.top .sub { color: var(--fg-soft); font-size: 14px; margin-top: 2px; }
 .kb-row { display: grid; gap: 6px; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); }
 .key { position: relative; min-height: 64px; border-radius: 8px; border: 1px solid var(--key-edge); background: var(--key-bg);
   box-shadow: var(--shadow); padding: 4px 5px 5px; text-align: left; display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+.key:hover:not(.move) { border-color: var(--gold); }
 .key .cap { font-family: var(--f-mono); font-weight: 700; font-size: 12px; color: var(--fg-soft); }
 .key .act { font-size: 12px; font-weight: 600; line-height: 1.15; color: var(--fg); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
+.key .act.empty { color: var(--fg-soft); font-weight: 400; }
 .key .tag { position: absolute; top: 4px; right: 5px; font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-soft); }
-.key.span2 { grid-column: span 2; }
 .key.move { background: var(--surface-2); cursor: default; }
 .key.move .act { color: var(--fg-soft); font-weight: 400; }
 .key.mod { background: var(--surface-2); }
@@ -102,7 +100,6 @@ header.top .sub { color: var(--fg-soft); font-size: 14px; margin-top: 2px; }
 .key.flex .tag { color: var(--gold); }
 .key.selected { outline: 2px solid var(--gold); outline-offset: 1px; }
 .key.target { animation: pulse 1.6s ease-in-out infinite; }
-.key.dragover { outline: 2px dashed var(--gold); }
 @keyframes pulse { 50% { box-shadow: 0 0 0 3px var(--gold-soft), var(--shadow); } }
 @media (prefers-reduced-motion: reduce) { .key.target { animation: none; box-shadow: 0 0 0 3px var(--gold-soft), var(--shadow); } }
 
@@ -114,74 +111,66 @@ header.top .sub { color: var(--fg-soft); font-size: 14px; margin-top: 2px; }
 .plate { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 8px; border-radius: 14px; background: var(--surface-2); }
 .plate .key { min-height: 70px; border-radius: 50% / 38%; align-items: center; text-align: center; justify-content: center; }
 .plate .key .tag { position: static; }
-.wheel { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.wheel { display: grid; gap: 6px; }
 .wheel .key { min-height: 46px; }
 .tops { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .tilt-toggle { font-size: 12px; color: var(--fg-soft); display: flex; gap: 6px; align-items: center; }
 
-/* side column */
-.side { display: grid; gap: 14px; }
-.flex-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.flex-table th, .flex-table td { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
-.flex-table th { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-soft); font-weight: 700; }
+/* tables / pills */
+.flex-table, .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.flex-table th, .flex-table td, .tbl th, .tbl td { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+.flex-table th, .tbl th { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-soft); font-weight: 700; }
+.tbl td.n, .tbl th.n { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--f-mono); font-size: 12px; }
 .flex-table select { width: 100%; max-width: 160px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 3px 4px; font-size: 13px; }
-.flex-table td.k { font-family: var(--f-mono); font-weight: 700; white-space: nowrap; }
-.flex-wrap { overflow-x: auto; }
-
+.flex-table td.k, .mono { font-family: var(--f-mono); font-weight: 700; white-space: nowrap; }
+.scroll-x { overflow-x: auto; }
 .cov-score { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 10px; }
 .cov-score div { background: var(--surface-2); border-radius: 8px; padding: 8px; }
 .cov-score b { display: block; font-family: var(--f-mono); font-size: 20px; font-variant-numeric: tabular-nums; }
 .cov-score span { font-size: 12px; color: var(--fg-soft); }
 .cov-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
-.cov-list li { display: flex; gap: 8px; align-items: baseline; }
+.cov-list li { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
 .pill { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 1px 6px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
-.pill.core { color: var(--core); } .pill.frequent { color: var(--core); opacity: .8; } .pill.cooldown, .pill.talent-flex { color: var(--gold); }
-.pill.emergency { color: var(--crit); } .pill.utility, .pill.situational, .pill.buff, .pill.ooc, .pill.lowlevel { color: var(--fg-soft); }
-.pill.none { color: var(--fg-soft); opacity: .6; }
+.pill.core, .pill.frequent { color: var(--core); } .pill.cooldown, .pill.talent-flex { color: var(--gold); }
+.pill.emergency { color: var(--crit); } .pill.utility, .pill.situational, .pill.buff, .pill.ooc, .pill.lowlevel, .pill.none { color: var(--fg-soft); }
 .ok { color: var(--core); font-size: 13px; }
-
-/* detail */
-.detail h3 { font-family: var(--f-display); font-weight: 400; font-size: 18px; margin: 2px 0 6px; }
-.detail .meta { font-size: 13px; color: var(--fg-soft); }
-.detail .txt { font-size: 14px; margin: 8px 0; }
-.detail pre { font-family: var(--f-mono); font-size: 12px; background: var(--surface-2); border-radius: 8px; padding: 8px 10px; white-space: pre-wrap; word-break: break-word; margin: 8px 0; }
-.spec-uses { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 6px; margin: 8px 0; }
-.spec-uses div { border: 1px solid var(--line); border-radius: 8px; padding: 6px; font-size: 12px; }
-.spec-uses div b { display: block; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
-.spec-uses .holy b { color: var(--holy); } .spec-uses .prot b { color: var(--prot); } .spec-uses .ret b { color: var(--ret); }
+.bad { color: var(--crit); }
 .btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 12px; font-weight: 600; font-size: 13px; }
 .btn.primary { background: var(--gold); border-color: var(--gold); color: var(--surface); }
+.btn.big { padding: 10px 20px; font-size: 15px; }
 .btn.danger { color: var(--crit); }
-.btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-.muted { color: var(--fg-soft); font-size: 13px; }
-
-/* palette */
-.palette { margin-top: 14px; }
-.pal-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
-.pal-tools input[type=search] { flex: 1 1 200px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; align-items: center; }
 .chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 3px 10px; font-size: 13px; color: var(--fg-soft); }
 .chip[aria-pressed="true"] { background: var(--fg); color: var(--surface); border-color: var(--fg); }
-.pal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr)); gap: 8px; }
-.ab { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 10px; text-align: left; display: grid; gap: 4px; min-width: 0; overflow: hidden; }
-.ab:hover { border-color: var(--fg-soft); }
-.ab[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft); }
-.ab > div, .ab .nm { min-width: 0; }
-.ab .row1 { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
-.ab .nm { font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ab .kind { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-soft); font-weight: 700; white-space: nowrap; }
-.ab .row2 { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; color: var(--fg-soft); }
-.ab .keys { font-family: var(--f-mono); font-size: 11px; color: var(--fg); }
-.ab.locked { opacity: .5; }
-.ab.unbound-need { border-left: 3px solid var(--warn); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
 
-/* assign bar */
-.assign-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--fg); color: var(--surface);
-  padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px));
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; font-size: 14px; }
-.assign-bar[hidden] { display: none; }
-.assign-bar .btn { background: transparent; color: var(--surface); border-color: color-mix(in srgb, var(--surface) 40%, transparent); }
+/* picker sheet */
+.sheet-scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 40; display: flex; align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.sheet-scrim[hidden] { display: none; }
+.sheet { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; width: min(640px, 100%); max-height: 100%; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+@media (max-width: 600px) { .sheet-scrim { align-items: flex-end; padding: 0; padding-top: max(40px, env(safe-area-inset-top, 0px)); }
+  .sheet { border-radius: 14px 14px 0 0; max-height: 88vh; padding-bottom: env(safe-area-inset-bottom, 0px); } }
+.sheet-head { padding: 14px 16px 10px; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
+.sheet-head .row { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+.sheet-head .keyname { font-family: var(--f-mono); font-weight: 700; font-size: 20px; }
+.cur { background: var(--surface-2); border-radius: 10px; padding: 8px 10px; display: grid; gap: 6px; font-size: 13px; }
+.cur pre { font-family: var(--f-mono); font-size: 11.5px; margin: 0; white-space: pre-wrap; word-break: break-word; }
+.spec-uses { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 6px; }
+.spec-uses div { border: 1px solid var(--line); border-radius: 8px; padding: 4px 6px; font-size: 12px; background: var(--surface); }
+.spec-uses div b { display: block; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+.spec-uses .holy b { color: var(--holy); } .spec-uses .prot b { color: var(--prot); } .spec-uses .ret b { color: var(--ret); }
+.sheet input[type=search] { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.opt-list { overflow-y: auto; padding: 6px 8px 12px; display: grid; gap: 2px; }
+.opt-group { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-soft); font-weight: 700; padding: 10px 8px 4px; }
+.opt { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: center; text-align: left; border: 1px solid transparent; background: transparent; border-radius: 8px; padding: 7px 8px; }
+.opt:hover, .opt:focus-visible { background: var(--surface-2); border-color: var(--line); }
+.opt .nm { font-weight: 700; font-size: 14px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.opt .sub { grid-column: 1 / -1; font-size: 12px; color: var(--fg-soft); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.opt .right { display: flex; gap: 6px; align-items: center; }
+.opt .kind { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-soft); font-weight: 700; }
+.opt.locked .nm { color: var(--fg-soft); }
+.opt.current { border-color: var(--gold); }
 
 /* layouts */
 .layouts textarea { width: 100%; min-height: 110px; font-family: var(--f-mono); font-size: 12px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
@@ -190,6 +179,99 @@ header.top .sub { color: var(--fg-soft); font-size: 14px; margin-top: 2px; }
 .toast { font-size: 13px; color: var(--core); min-height: 1.2em; }
 details > summary { cursor: pointer; font-weight: 600; }
 .foot { margin-top: 18px; font-size: 12px; color: var(--fg-soft); max-width: 70ch; }
+.pick-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--fg); color: var(--surface);
+  padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; font-size: 14px; }
+.pick-bar[hidden] { display: none; }
+.pick-bar .btn { background: transparent; color: var(--surface); border-color: color-mix(in srgb, var(--surface) 40%, transparent); }
+
+/* practice setup */
+.prac-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 900px) { .prac-grid { grid-template-columns: minmax(0, 1fr); } }
+.form { display: grid; gap: 12px; }
+.form .f { display: grid; gap: 4px; }
+.form label.lbl { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-soft); }
+.check { display: flex; gap: 8px; align-items: start; font-size: 14px; }
+.check input { margin-top: 3px; accent-color: var(--gold); }
+.mode-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: 8px; }
+.mode-card { text-align: left; border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 10px; display: grid; gap: 4px; }
+.mode-card b { font-size: 14px; }
+.mode-card span { font-size: 12.5px; color: var(--fg-soft); }
+.mode-card[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-soft); }
+.mode-card[disabled] { opacity: .5; cursor: not-allowed; }
+.learn-list { display: grid; gap: 6px; }
+.learn-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; font-size: 13px; padding: 4px 0; border-bottom: 1px solid var(--line); }
+.learn-row .sig { font-family: var(--f-mono); font-size: 12px; color: var(--fg-soft); }
+.learn-row.listening .sig { color: var(--gold); }
+.callout { background: var(--gold-soft); border-radius: 10px; padding: 10px 12px; font-size: 13px; }
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr)); gap: 8px; margin: 10px 0; }
+.stat-row div { background: var(--surface-2); border-radius: 8px; padding: 8px 10px; }
+.stat-row b { display: block; font-family: var(--f-mono); font-size: 20px; font-variant-numeric: tabular-nums; }
+.stat-row span { font-size: 12px; color: var(--fg-soft); }
+.sugg { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 6px; font-size: 14px; }
+.sugg li { border-left: 3px solid var(--warn); padding: 4px 10px; background: var(--surface-2); border-radius: 0 8px 8px 0; }
+
+/* arena */
+.arena { position: fixed; inset: 0; z-index: 50; background: var(--bg); display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); user-select: none; -webkit-user-select: none; outline: none; }
+.arena[hidden] { display: none; }
+.a-top { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--line); background: var(--surface); }
+.a-top .timer { font-family: var(--f-mono); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.a-top .score { font-family: var(--f-mono); font-size: 14px; color: var(--fg-soft); }
+.a-mid { position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 14px; padding: 14px max(16px, env(safe-area-inset-right, 0px)) 14px max(16px, env(safe-area-inset-left, 0px)); }
+@media (max-width: 760px) { .a-mid { grid-template-columns: minmax(0, 1fr); overflow-y: auto; } }
+.enc { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.bar { height: 18px; border-radius: 5px; background: var(--surface-2); overflow: hidden; position: relative; border: 1px solid var(--line); }
+.bar > i { position: absolute; inset: 0 auto 0 0; background: var(--core); transition: width .15s linear; }
+.bar.enemy > i { background: var(--crit); }
+.bar.mana > i { background: var(--mana); }
+.bar.cast > i { background: var(--gold); transition: none; }
+.bar > span { position: relative; font-size: 11px; font-weight: 700; padding: 0 6px; line-height: 18px; }
+.target-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
+.target-card .tn { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.buffs { display: flex; flex-wrap: wrap; gap: 6px; }
+.buff { font-size: 12px; border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; background: var(--surface); font-variant-numeric: tabular-nums; }
+.buff.missing { border-color: var(--crit); color: var(--crit); }
+.party { display: grid; gap: 6px; }
+.frame { border: 2px solid var(--line); border-radius: 10px; background: var(--surface); padding: 8px 10px; display: grid; gap: 4px; cursor: crosshair; }
+.frame.hover { border-color: var(--gold); }
+.frame.sel { box-shadow: 0 0 0 2px var(--gold-soft); }
+.frame.dead { opacity: .45; }
+.frame .fn { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; gap: 8px; }
+.frame .marks { display: flex; gap: 4px; font-size: 11px; }
+.frame .mk { border-radius: 4px; padding: 0 5px; font-weight: 700; }
+.mk.poison { background: color-mix(in srgb, var(--core) 25%, transparent); }
+.mk.disease { background: color-mix(in srgb, var(--warn) 30%, transparent); }
+.mk.magic { background: color-mix(in srgb, var(--mana) 30%, transparent); }
+.mk.vigil, .mk.oath { background: var(--gold-soft); }
+.mk.bop { background: color-mix(in srgb, var(--holy) 30%, transparent); }
+.prompt { background: var(--surface); border: 2px solid var(--gold); border-radius: 14px; padding: 14px; display: grid; gap: 6px; }
+.prompt[hidden] { display: none; }
+.prompt .pt { font-family: var(--f-display); font-size: 22px; text-wrap: balance; }
+.prompt .hint { font-family: var(--f-mono); font-size: 13px; color: var(--fg-soft); }
+.prompt .bar > i { background: var(--gold); transition: none; }
+.log { display: grid; gap: 4px; align-content: start; font-size: 13px; min-width: 0; }
+.log .ln { padding: 4px 8px; border-radius: 6px; background: var(--surface); border-left: 3px solid var(--line); overflow-wrap: anywhere; }
+.log .ln.good { border-left-color: var(--core); }
+.log .ln.bad { border-left-color: var(--crit); }
+.log .ln.meh { border-left-color: var(--warn); }
+.a-cast { padding: 0 max(16px, env(safe-area-inset-right, 0px)) 8px max(16px, env(safe-area-inset-left, 0px)); min-height: 26px; }
+.a-bar { display: flex; gap: 6px; overflow-x: auto; padding: 10px max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px)); border-top: 1px solid var(--line); background: var(--surface); }
+.slot { position: relative; flex: 0 0 76px; height: 64px; border-radius: 8px; border: 1px solid var(--key-edge); background: var(--key-bg); box-shadow: var(--shadow); padding: 4px; text-align: left; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
+.slot .k { font-family: var(--f-mono); font-size: 11px; font-weight: 700; color: var(--fg-soft); position: relative; }
+.slot .n { font-size: 11px; font-weight: 600; line-height: 1.1; position: relative; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.slot .cd { position: absolute; inset: auto 0 0 0; background: color-mix(in srgb, var(--fg) 22%, transparent); }
+.slot .cdt { position: absolute; right: 4px; top: 3px; font-family: var(--f-mono); font-size: 11px; font-weight: 700; }
+.slot.next { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft), var(--shadow); }
+.slot.flash-good { border-color: var(--core); }
+.slot.flash-bad { border-color: var(--crit); }
+.paused { position: absolute; inset: 0; background: var(--scrim); display: grid; place-items: center; z-index: 5; }
+.paused[hidden] { display: none; }
+.paused .box { background: var(--surface); border-radius: 14px; padding: 18px; display: grid; gap: 10px; text-align: center; max-width: 90%; }
+.float { position: absolute; font-family: var(--f-mono); font-weight: 700; font-size: 14px; pointer-events: none; animation: rise 1s ease-out forwards; }
+@keyframes rise { to { transform: translateY(-40px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .float { animation: none; opacity: 0; } }
 </style>
 
 <div class="wrap">
@@ -202,93 +284,169 @@ details > summary { cursor: pointer; font-weight: 600; }
     <div class="save-state" id="saveState" data-s="idle" aria-live="polite"><span class="dot"></span><span id="saveText">Loading…</span></div>
   </header>
 
+  <nav class="tabs" aria-label="Sections">
+    <a href="#plan" id="tabPlan">Plan</a>
+    <a href="#practice" id="tabPractice">Practice</a>
+  </nav>
+
   <div class="controls" role="toolbar" aria-label="View controls">
     <div class="seg spec" role="group" aria-label="Spec">
       <button type="button" data-spec="holy" aria-pressed="true">Holy</button>
       <button type="button" data-spec="prot" aria-pressed="false">Protection</button>
       <button type="button" data-spec="ret" aria-pressed="false">Retribution</button>
     </div>
-    <div class="seg layer" role="group" aria-label="Modifier layer">
+    <div class="seg layer" role="group" aria-label="Modifier layer" id="layerSeg">
       <button type="button" data-layer="" aria-pressed="true">No mod</button>
       <button type="button" data-layer="Shift" aria-pressed="false">Shift</button>
       <button type="button" data-layer="Ctrl" aria-pressed="false">Ctrl</button>
       <button type="button" data-layer="Alt" aria-pressed="false">Alt</button>
     </div>
     <label class="ctl" for="lvl">Level <input type="range" id="lvl" min="1" max="60" value="60"><output id="lvlOut" for="lvl">60</output></label>
+    <label class="ctl" for="laySelTop">Layout <select id="laySelTop"></select></label>
   </div>
 
-  <div class="board">
-    <section class="panel" aria-labelledby="kbTitle">
-      <div class="panel-head">
-        <h2 id="kbTitle">Keyboard</h2>
-        <div class="legend">
-          <span><i style="background:var(--core)"></i>core</span>
-          <span><i style="background:color-mix(in srgb, var(--core) 55%, transparent)"></i>frequent</span>
-          <span><i style="background:var(--gold)"></i>cooldown / talent</span>
-          <span><i style="background:var(--crit)"></i>emergency</span>
+  <!-- PLAN -->
+  <section id="viewPlan">
+    <div class="board">
+      <section class="panel" aria-labelledby="kbTitle">
+        <div class="panel-head">
+          <h2 id="kbTitle">Keyboard</h2>
+          <div class="legend">
+            <span><i style="background:var(--core)"></i>core</span>
+            <span><i style="background:color-mix(in srgb, var(--core) 55%, transparent)"></i>frequent</span>
+            <span><i style="background:var(--gold)"></i>cooldown / talent</span>
+            <span><i style="background:var(--crit)"></i>emergency</span>
+          </div>
         </div>
-      </div>
-      <div class="kb-scroll"><div class="kb" id="kb"></div></div>
+        <p class="muted" style="margin:0 0 8px">Click any key or mouse button to choose what goes on it.</p>
+        <div class="kb-scroll"><div class="kb" id="kb"></div></div>
+        <div class="panel-head" style="margin-top:16px">
+          <h2>Razer Naga V2 Pro</h2>
+          <label class="tilt-toggle" for="tilt"><input type="checkbox" id="tilt"> Show wheel tilt</label>
+        </div>
+        <div class="mouse" id="mouse"></div>
+      </section>
+      <aside class="side">
+        <section class="panel" aria-labelledby="covTitle">
+          <div class="panel-head"><h2 id="covTitle">Coverage</h2><span class="muted" id="covSpec"></span></div>
+          <div class="cov-score" id="covScore"></div>
+          <ul class="cov-list" id="covList"></ul>
+        </section>
+        <section class="panel" aria-labelledby="flexTitle">
+          <div class="panel-head"><h2 id="flexTitle">Flex slots</h2><span class="muted">talent buttons per spec</span></div>
+          <div class="scroll-x"><table class="flex-table" id="flexTable"></table></div>
+        </section>
+      </aside>
+    </div>
 
-      <div class="panel-head" style="margin-top:16px">
-        <h2>Razer Naga V2 Pro</h2>
-        <label class="tilt-toggle" for="tilt"><input type="checkbox" id="tilt"> Show wheel tilt</label>
+    <section class="panel layouts" style="margin-top:14px" aria-labelledby="layTitle">
+      <div class="panel-head"><h2 id="layTitle">Layouts</h2></div>
+      <div class="row">
+        <label for="laySel" class="muted">Current</label>
+        <select id="laySel"></select>
+        <input type="text" id="layName" placeholder="New layout name" aria-label="New layout name">
+        <button class="btn" type="button" id="layDup">Save as copy</button>
+        <button class="btn" type="button" id="layReset">Reset to draft v0</button>
+        <button class="btn danger" type="button" id="layDel">Delete</button>
       </div>
-      <div class="mouse" id="mouse"></div>
+      <div id="layConfirm" class="btn-row" hidden></div>
+      <details style="margin-top:12px">
+        <summary>Export / import</summary>
+        <div class="btn-row">
+          <button class="btn" type="button" id="expText">Copy as bind list</button>
+          <button class="btn" type="button" id="expJson">Copy as JSON</button>
+          <button class="btn" type="button" id="impJson">Import JSON from box</button>
+        </div>
+        <textarea id="io" aria-label="Export or import text" spellcheck="false"></textarea>
+      </details>
+      <div class="toast" id="toast" role="status"></div>
     </section>
-
-    <aside class="side">
-      <section class="panel detail" id="detail" aria-live="polite"></section>
-      <section class="panel" aria-labelledby="covTitle">
-        <div class="panel-head"><h2 id="covTitle">Coverage</h2><span class="muted" id="covSpec"></span></div>
-        <div class="cov-score" id="covScore"></div>
-        <ul class="cov-list" id="covList"></ul>
-      </section>
-      <section class="panel" aria-labelledby="flexTitle">
-        <div class="panel-head"><h2 id="flexTitle">Flex slots</h2><span class="muted">talent buttons per spec</span></div>
-        <div class="flex-wrap"><table class="flex-table" id="flexTable"></table></div>
-      </section>
-    </aside>
-  </div>
-
-  <section class="panel palette" aria-labelledby="palTitle">
-    <div class="panel-head"><h2 id="palTitle">Abilities &amp; macros</h2><span class="muted">Tap one, then tap a key. On desktop you can also drag it.</span></div>
-    <div class="pal-tools">
-      <input type="search" id="q" placeholder="Search abilities, macros…" aria-label="Search">
-      <div class="chips" id="chips"></div>
-    </div>
-    <div class="pal-grid" id="pal"></div>
   </section>
 
-  <section class="panel layouts" style="margin-top:14px" aria-labelledby="layTitle">
-    <div class="panel-head"><h2 id="layTitle">Layouts</h2><span class="muted" id="layNote"></span></div>
-    <div class="row">
-      <label for="laySel" class="muted">Current</label>
-      <select id="laySel"></select>
-      <input type="text" id="layName" placeholder="New layout name" aria-label="New layout name">
-      <button class="btn" type="button" id="layDup">Save as copy</button>
-      <button class="btn" type="button" id="layReset">Reset to draft v0</button>
-      <button class="btn danger" type="button" id="layDel">Delete</button>
+  <!-- PRACTICE -->
+  <section id="viewPractice" hidden>
+    <div class="prac-grid">
+      <section class="panel" aria-labelledby="pracTitle">
+        <div class="panel-head"><h2 id="pracTitle">Practice run</h2><span class="muted" id="pracSpec"></span></div>
+        <div class="form">
+          <div class="f">
+            <span class="lbl" style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-soft)">Mode</span>
+            <div class="mode-cards" id="modeCards"></div>
+          </div>
+          <div class="f">
+            <label class="lbl" for="pDur">Length</label>
+            <select id="pDur" class="btn" style="justify-self:start"><option value="60">1 minute</option><option value="120" selected>2 minutes</option><option value="180">3 minutes</option></select>
+          </div>
+          <div class="f">
+            <label class="lbl" for="pDiff">Pace</label>
+            <select id="pDiff" class="btn" style="justify-self:start"><option value="0.75">Relaxed</option><option value="1" selected>Normal</option><option value="1.35">Raid night</option></select>
+          </div>
+          <label class="check" for="pHints"><input type="checkbox" id="pHints" checked><span><b>Show key hints</b><br><span class="muted">Learning mode: the prompt names the key and the next ability glows. Turn off to test your memory.</span></span></label>
+          <label class="check" for="pRealCd"><input type="checkbox" id="pRealCd"><span><b>Real long cooldowns</b><br><span class="muted">Off: Divine Shield, Lay on Hands and similar can be drilled repeatedly. On: they lock out like in game.</span></span></label>
+          <div class="btn-row"><button class="btn primary big" type="button" id="pStart">Start run</button><span class="muted">Esc pauses. The run reads your real keyboard and mouse.</span></div>
+        </div>
+      </section>
+      <aside class="side">
+        <section class="panel" aria-labelledby="mouseSetupTitle">
+          <div class="panel-head"><h2 id="mouseSetupTitle">Naga button setup</h2></div>
+          <p class="muted" style="margin-top:0">Your Naga side buttons send whatever keys Razer Synapse assigns. Click <b>Learn</b>, then press that button so the simulator knows which button is which.</p>
+          <div class="callout">Tip: in Synapse, set the 6 side buttons to <b>Numpad 1–6</b>. WoW can bind numpad keys separately from the number row, so they won't clash with 1–6 on your keyboard.</div>
+          <div class="learn-list" id="learnList" style="margin-top:10px"></div>
+          <div class="btn-row"><button class="btn" type="button" id="learnReset">Forget learned buttons</button></div>
+        </section>
+        <section class="panel" aria-labelledby="histTitle">
+          <div class="panel-head"><h2 id="histTitle">Recent runs</h2></div>
+          <div id="history"></div>
+        </section>
+      </aside>
     </div>
-    <div id="layConfirm" class="btn-row" hidden></div>
-    <details style="margin-top:12px">
-      <summary>Export / import</summary>
-      <div class="btn-row">
-        <button class="btn" type="button" id="expText">Copy as bind list</button>
-        <button class="btn" type="button" id="expJson">Copy as JSON</button>
-        <button class="btn" type="button" id="impJson">Import JSON from box</button>
-      </div>
-      <textarea id="io" aria-label="Export or import text" spellcheck="false"></textarea>
-    </details>
-    <div class="toast" id="toast" role="status"></div>
+    <section class="panel" id="results" style="margin-top:14px" hidden></section>
   </section>
 
-  <p class="foot">Ability data comes from the WoW Forever client (build 1.60.1.70862, hotfixes of 7 Nov 2026). Items marked <b>verify</b> were not confirmed in-game yet. Shift, Ctrl and Alt layers each hold a full set of binds. WASD is kept for movement.</p>
+  <p class="foot">Ability data comes from the WoW Forever client (build 1.60.1.70862, hotfixes of 7 Nov 2026). Items marked <b>verify</b> were not confirmed in-game yet. The practice fight is a simplified model for testing keys, not a damage simulator. Browser shortcuts such as Ctrl+W and Ctrl+T can't be blocked, so avoid testing those combinations here.</p>
 </div>
 
-<div class="assign-bar" id="assignBar" hidden>
-  <span>Assigning <b id="assignName"></b>: tap a key or mouse button</span>
-  <button class="btn" type="button" id="assignCancel">Cancel</button>
+<div class="pick-bar" id="pickBar" hidden>
+  <span>Binding <b id="pickName"></b>: click a key or mouse button</span>
+  <button class="btn" type="button" id="pickCancel">Cancel</button>
+</div>
+
+<div class="sheet-scrim" id="sheetScrim" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetKey" id="sheet">
+    <div class="sheet-head">
+      <div class="row">
+        <div><div class="eyebrow" id="sheetReach"></div><div class="keyname" id="sheetKey"></div></div>
+        <button class="btn" type="button" id="sheetClose">Close</button>
+      </div>
+      <div class="cur" id="sheetCur"></div>
+      <input type="search" id="sheetQ" placeholder="Search abilities, macros, items…" aria-label="Search abilities">
+      <div class="chips" id="sheetChips"></div>
+    </div>
+    <div class="opt-list" id="sheetList"></div>
+  </div>
+</div>
+
+<div class="arena" id="arena" hidden tabindex="-1" aria-label="Practice run">
+  <div class="a-top">
+    <div><div class="eyebrow" id="aMode"></div><div class="score" id="aScore"></div></div>
+    <div class="timer" id="aTimer">2:00</div>
+    <div class="btn-row" style="margin:0"><button class="btn" type="button" id="aPause">Pause</button><button class="btn danger" type="button" id="aStop">End run</button></div>
+  </div>
+  <div class="a-mid" id="aMid">
+    <div class="enc">
+      <div class="prompt" id="aPrompt" hidden>
+        <div class="eyebrow" id="aPromptKind">Event</div>
+        <div class="pt" id="aPromptText"></div>
+        <div class="hint" id="aPromptHint"></div>
+        <div class="bar"><i id="aPromptBar" style="width:100%"></i></div>
+      </div>
+      <div id="aEnc"></div>
+    </div>
+    <div class="log" id="aLog" aria-live="polite"></div>
+    <div class="paused" id="aPaused" hidden><div class="box"><h3>Paused</h3><div class="btn-row" style="justify-content:center"><button class="btn primary" type="button" id="aResume">Resume</button><button class="btn danger" type="button" id="aStop2">End run</button></div></div></div>
+  </div>
+  <div class="a-cast" id="aCast"></div>
+  <div class="a-bar" id="aBar"></div>
 </div>
 
 <script>
@@ -299,8 +457,9 @@ const SPEC_NAME = { holy: "Holy", prot: "Protection", ret: "Retribution" };
 const USAGE_RANK = { core: 0, frequent: 1, "talent-flex": 2, cooldown: 2, emergency: 3, utility: 4, situational: 5, buff: 6, lowlevel: 7, ooc: 8, none: 9 };
 const NEED = ["core", "frequent", "talent-flex", "cooldown", "emergency", "utility"];
 const FLEX_IDS = ["FLEX-A", "FLEX-B", "FLEX-C", "FLEX-D"];
+const MOVE_KEYS = new Set(["W", "A", "S", "D", "Space"]);
 
-// ---------- catalog ----------
+// ================= catalog =================
 const byId = {};
 DATA.spells.forEach(s => byId[s.id] = s);
 DATA.racials.forEach(s => byId[s.id] = s);
@@ -312,15 +471,17 @@ DATA.macros.forEach(m => {
   byId[m.id] = { id: m.id, name: m.name, kind: "macro", category: base ? base.category : "macro", usage,
     level: base ? base.level : 1, text: m.why || "", body: m.body, replaces: m.replaces || null, covers: m.covers || [], verify: !!m.verify, roles: m.roles };
 });
-FLEX_IDS.forEach(f => byId[f] = { id: f, name: f.replace("FLEX-", "Flex "), kind: "flex", category: "flex", level: 1 });
+FLEX_IDS.forEach(f => byId[f] = { id: f, name: f.replace("FLEX-", "Flex "), kind: "flex", category: "flex", level: 1, usage: {} });
 const TALENT_SPELLS = DATA.spells.filter(s => s.source === "talent");
-
 const HW = DATA.hardware;
 const REACH = {};
 Object.entries(HW.keyboard.reachTiers).forEach(([t, keys]) => keys.forEach(k => REACH[k] = t));
 HW.mouse.buttons.forEach(b => { if (b.bindable) REACH[b.id] = b.reach; });
+const MOUSE_LABEL = { "M-S1": "Naga 1", "M-S2": "Naga 2", "M-S3": "Naga 3", "M-S4": "Naga 4", "M-S5": "Naga 5", "M-S6": "Naga 6",
+  "M-MMB": "Wheel click", "M-WUP": "Wheel up", "M-WDN": "Wheel down", "M-TOP1": "Top 1", "M-TOP2": "Top 2", "M-TILTL": "Tilt left", "M-TILTR": "Tilt right" };
+const keyLabel = id => id.replace(/M-[A-Z0-9]+/, m => MOUSE_LABEL[m] || m);
 
-// ---------- state ----------
+// ================= state =================
 function draftLayout() {
   const binds = {};
   DATA.layout.binds.forEach(b => binds[b.key] = b.action);
@@ -328,21 +489,21 @@ function draftLayout() {
   FLEX_IDS.forEach(f => flex[f] = { ...DATA.layout.flexSlots[f] });
   return { binds, flex };
 }
-let store = { current: "Draft v0", layouts: { "Draft v0": draftLayout() } };
-const view = { spec: "holy", layer: "", level: 60, pick: null, key: null, q: "", cat: "all", tilt: false };
-try { const v = JSON.parse(localStorage.getItem("lk-view") || "{}"); Object.assign(view, { spec: v.spec || "holy", tilt: !!v.tilt }); } catch (e) {}
+let store = { current: "Draft v0", layouts: { "Draft v0": draftLayout() }, runs: [] };
+const view = { tab: "plan", spec: "holy", layer: "", level: 60, key: null, pick: null, tilt: false, sheetQ: "", sheetCat: "suggested" };
+try { const v = JSON.parse(localStorage.getItem("lk-view") || "{}"); view.spec = SPECS.includes(v.spec) ? v.spec : "holy"; view.tilt = !!v.tilt; } catch (e) {}
 const L = () => store.layouts[store.current];
 
-// ---------- helpers ----------
+// ================= helpers =================
 const $ = s => document.querySelector(s);
 const el = (tag, attrs = {}, ...kids) => {
   const n = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
     if (v == null || v === false) continue;
-    if (k === "class") n.className = v; else if (k === "text") n.textContent = v;
+    if (k === "class") n.className = v; else if (k === "text") n.textContent = v; else if (k === "style") n.setAttribute("style", v);
     else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v === true ? "" : v);
   }
-  kids.flat().forEach(c => c != null && n.append(c.nodeType ? c : document.createTextNode(c)));
+  kids.flat().forEach(c => c != null && c !== false && n.append(c.nodeType ? c : document.createTextNode(c)));
   return n;
 };
 const keyId = (base, layer) => (layer ? layer + "-" : "") + base;
@@ -353,19 +514,14 @@ const resolve = (actionId, spec) => {
   return a;
 };
 const usageOf = (actionId, spec) => { const a = resolve(actionId, spec); return a ? (a.usage?.[spec] || "situational") : null; };
-const spellOf = a => a ? (a.kind === "macro" ? (a.replaces || a.id) : a.id) : null;
-function keysFor(actionId) {
-  return Object.entries(L().binds).filter(([, v]) => v === actionId).map(([k]) => k);
-}
+const keysFor = actionId => Object.entries(L().binds).filter(([, v]) => v === actionId).map(([k]) => k);
 function coveredIn(spec) {
   const set = new Map();
   for (const [k, v] of Object.entries(L().binds)) {
     const a = resolve(v, spec); if (!a) continue;
-    const sid = spellOf(a);
-    [sid, ...(a.covers || [])].forEach(x => { if (!set.has(x)) set.set(x, []); set.get(x).push(k); });
-    if (a.kind === "macro" && a.replaces === "purify") set.set("cleanse", set.get("cleanse") || [k]);
+    const ids = a.kind === "macro" ? [a.replaces || a.id, ...a.covers] : [a.id];
+    ids.forEach(x => { if (!set.has(x)) set.set(x, []); set.get(x).push(k); });
   }
-  // Purify shares the Cleanse key below 42
   if (set.has("cleanse") && !set.has("purify")) set.set("purify", set.get("cleanse"));
   return set;
 }
@@ -374,19 +530,25 @@ function tierOfKey(k) {
   let mods = 0, base = k;
   if (["Shift", "Ctrl", "Alt"].includes(parts[0])) { mods = parts[0] === "Shift" ? 1 : 2; base = parts.slice(1).join("-"); }
   const order = ["best", "good", "ok", "far"];
-  const t = REACH[base] || "far";
-  return order[Math.min(3, order.indexOf(t) + mods)];
+  return order[Math.min(3, order.indexOf(REACH[base] || "far") + mods)];
 }
-const short = s => s.length > 22 ? s.slice(0, 21) + "…" : s;
+const short = (s, n = 22) => s.length > n ? s.slice(0, n - 1) + "…" : s;
+// talent spells count as "known" in a spec when one of that spec's flex slots holds them
+function knownIn(spellId, spec, level) {
+  const a = byId[spellId]; if (!a) return false;
+  if ((a.level || 1) > level) return false;
+  if (a.source === "talent") return FLEX_IDS.some(f => L().flex[f]?.[spec] === spellId);
+  return true;
+}
 
-// ---------- keyboard ----------
+// ================= PLAN: keyboard & mouse =================
 const KB_ROWS = [
-  { cols: 16, keys: [["F1"], ["F2"], ["F3"], ["F4"], ["F5"]] },
-  { cols: 16, keys: [["`"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"]] },
-  { cols: 16, keys: [["Tab", 2], ["Q"], ["W", 1, "move"], ["E"], ["R"], ["T"], ["Y"]] },
-  { cols: 16, keys: [["Caps", 2], ["A", 1, "move"], ["S", 1, "move"], ["D", 1, "move"], ["F"], ["G"], ["H"]] },
-  { cols: 16, keys: [["Shift", 2, "mod"], ["Z"], ["X"], ["C"], ["V"], ["B"]] },
-  { cols: 16, keys: [["Ctrl", 2, "mod"], ["Alt", 2, "mod"], ["Space", 4, "move"]] },
+  [["F1"], ["F2"], ["F3"], ["F4"], ["F5"]],
+  [["`"], ["1"], ["2"], ["3"], ["4"], ["5"], ["6"], ["7"]],
+  [["Tab", 2], ["Q"], ["W", 1, "move"], ["E"], ["R"], ["T"], ["Y"]],
+  [["Caps", 2], ["A", 1, "move"], ["S", 1, "move"], ["D", 1, "move"], ["F"], ["G"], ["H"]],
+  [["Shift", 2, "mod"], ["Z"], ["X"], ["C"], ["V"], ["B"]],
+  [["Ctrl", 2, "mod"], ["Alt", 2, "mod"], ["Space", 4, "move"]],
 ];
 function keyButton(base, opts = {}) {
   const id = keyId(base, view.layer);
@@ -398,31 +560,26 @@ function keyButton(base, opts = {}) {
   const label = base.startsWith("M-") ? opts.label : base;
   let actText = "";
   if (a) actText = a.kind === "flex" ? (r ? r.name : "(empty in " + SPEC_NAME[view.spec] + ")") : a.name;
-  const b = el("button", {
-    type: "button", class: "key" + (opts.cls ? " " + opts.cls : "") + (a?.kind === "flex" ? " flex" : "") +
-      (view.key === id ? " selected" : "") + (view.pick ? " target" : ""),
-    "data-u": u, "data-key": id,
-    "aria-label": `${view.layer ? view.layer + " " : ""}${label}: ${actText || "unbound"}`,
+  return el("button", {
+    type: "button", class: "key" + (a?.kind === "flex" ? " flex" : "") + (view.key === id ? " selected" : "") + (view.pick ? " target" : ""),
+    "data-u": u, "data-key": id, "aria-haspopup": "dialog",
+    "aria-label": `${view.layer ? view.layer + " " : ""}${label}: ${actText || "unbound"}. Choose ability`,
     onclick: () => onKey(id),
   },
     el("span", { class: "cap", text: (view.layer ? view.layer[0] + "-" : "") + label }),
-    el("span", { class: "act", text: actText ? short(actText) + (locked ? " (lvl " + r.level + ")" : "") : "" }),
+    el("span", { class: "act" + (actText ? "" : " empty"), text: actText ? short(actText) + (locked ? " (lvl " + r.level + ")" : "") : "+ assign" }),
     a?.kind === "flex" ? el("span", { class: "tag", text: a.name }) : (a?.kind === "macro" ? el("span", { class: "tag", text: "macro" }) : null),
   );
-  b.addEventListener("dragover", e => { e.preventDefault(); b.classList.add("dragover"); });
-  b.addEventListener("dragleave", () => b.classList.remove("dragover"));
-  b.addEventListener("drop", e => { e.preventDefault(); const aid = e.dataTransfer.getData("text/plain"); if (aid && byId[aid]) assign(id, aid); });
-  return b;
 }
 function renderKeyboard() {
   const kb = $("#kb"); kb.replaceChildren();
   KB_ROWS.forEach(row => {
-    const r = el("div", { class: "kb-row", style: `--cols:${row.cols}` });
-    row.keys.forEach(([k, span = 1, kind]) => {
+    const r = el("div", { class: "kb-row", style: "--cols:16" });
+    row.forEach(([k, span = 1, kind]) => {
       let node;
       if (kind === "move") node = el("div", { class: "key move", "aria-hidden": "true" }, el("span", { class: "cap", text: k }), el("span", { class: "act", text: k === "Space" ? "Jump" : "Move" }));
       else if (kind === "mod") node = el("button", { type: "button", class: "key mod", "aria-pressed": String(view.layer === k), onclick: () => setLayer(view.layer === k ? "" : k) },
-        el("span", { class: "cap", text: k }), el("span", { class: "act", text: view.layer === k ? "Layer on" : "Show layer" }));
+        el("span", { class: "cap", text: k }), el("span", { class: "act", text: view.layer === k ? "Showing layer" : "Show layer" }));
       else node = keyButton(k);
       node.style.gridColumn = `span ${span * 2}`;
       r.append(node);
@@ -432,86 +589,127 @@ function renderKeyboard() {
 }
 function renderMouse() {
   const m = $("#mouse"); m.replaceChildren();
-  const btn = id => HW.mouse.buttons.find(b => b.id === id);
   const left = el("div", { class: "mouse-group" },
     el("div", { class: "label", text: "Top & wheel" }),
     el("div", { class: "tops" }, keyButton("M-TOP1", { label: "Top 1" }), keyButton("M-TOP2", { label: "Top 2" })),
-    el("div", { class: "wheel" },
-      keyButton("M-WUP", { label: "Wheel ▲" }), keyButton("M-MMB", { label: "Wheel click" }), keyButton("M-WDN", { label: "Wheel ▼" })),
-    view.tilt ? el("div", { class: "tops" }, keyButton("M-TILTL", { label: "Tilt ◀" }), keyButton("M-TILTR", { label: "Tilt ▶" })) : null,
-  );
+    el("div", { class: "wheel" }, keyButton("M-WUP", { label: "Wheel ▲" }), keyButton("M-MMB", { label: "Wheel click" }), keyButton("M-WDN", { label: "Wheel ▼" })),
+    view.tilt ? el("div", { class: "tops" }, keyButton("M-TILTL", { label: "Tilt ◀" }), keyButton("M-TILTR", { label: "Tilt ▶" })) : null);
   const plate = el("div", { class: "plate", role: "group", "aria-label": "6-button side plate" });
   ["M-S1", "M-S2", "M-S3", "M-S4", "M-S5", "M-S6"].forEach((id, i) => plate.append(keyButton(id, { label: String(i + 1) })));
-  const right = el("div", { class: "mouse-group" }, el("div", { class: "label", text: "Side plate (thumb)" }), plate,
-    el("div", { class: "muted", text: "Front of the mouse is on the left. Top row = 1–3." }));
-  m.append(left, right);
-  void btn;
+  m.append(left, el("div", { class: "mouse-group" }, el("div", { class: "label", text: "Side plate (thumb)" }), plate,
+    el("div", { class: "muted", text: "Front of the mouse is on the left. Top row = 1–3." })));
 }
 
-// ---------- side panels ----------
-function renderDetail() {
-  const d = $("#detail"); d.replaceChildren();
-  const id = view.key;
-  if (!id) {
-    d.append(el("div", { class: "eyebrow", text: "Key details" }),
-      el("h3", { text: "Pick a key" }),
-      el("p", { class: "muted", text: "Tap any key or mouse button to see what it does in each spec. To change it, pick an ability below and tap the key." }));
-    return;
+// ================= PLAN: picker sheet =================
+const SHEET_CATS = [["suggested", "Suggested"], ["all", "All"], ["heal", "Heals"], ["melee", "Melee & damage"], ["seal", "Seals & Judgement"], ["defensive", "Defensive"], ["buff", "Blessings & auras"], ["macro", "Macros"], ["talent", "Talents"], ["general", "Items & general"], ["flex", "Flex slots"]];
+function catMatch(a, cat, sp, cov) {
+  switch (cat) {
+    case "all": return true;
+    case "suggested": return a.kind === "flex" || (a.kind !== "macro" && NEED.includes(a.usage?.[sp]) && !cov.has(a.id)) || (a.kind === "macro" && a.roles.includes(sp) && !keysFor(a.id).length && NEED.includes(a.usage?.[sp]));
+    case "heal": return a.category === "heal" || a.category === "dispel";
+    case "melee": return ["strike", "aoe", "damage", "control"].includes(a.category);
+    case "seal": return a.category === "seal" || a.category === "judgement";
+    case "defensive": return ["defensive", "emergency"].includes(a.category);
+    case "buff": return ["blessing", "aura", "buff"].includes(a.category);
+    case "macro": return a.kind === "macro";
+    case "talent": return a.source === "talent";
+    case "general": return a.kind === "general" || a.kind === "racial";
+    case "flex": return a.kind === "flex";
   }
-  const actionId = L().binds[id];
-  const a = actionId && byId[actionId];
-  d.append(el("div", { class: "eyebrow", text: id.replace(/M-/g, "Mouse ") }));
-  if (!a) {
-    d.append(el("h3", { text: "Unbound" }), el("p", { class: "muted", text: `Reach: ${tierOfKey(id)}. Pick an ability below to put it here.` }),
-      el("div", { class: "btn-row" }, el("button", { class: "btn", type: "button", text: "Close", onclick: () => { view.key = null; render(); } })));
-    return;
-  }
-  d.append(el("h3", { text: a.name + (a.verify ? " · verify" : "") }));
-  const meta = [a.kind, a.level > 1 ? "learned at " + a.level : null, a.ranks > 1 ? a.ranks + " ranks" : null, a.cost || null, "reach: " + tierOfKey(id)].filter(Boolean).join(" · ");
-  d.append(el("div", { class: "meta", text: meta }));
-  const uses = el("div", { class: "spec-uses" });
-  SPECS.forEach(sp => {
-    const r = resolve(actionId, sp);
-    uses.append(el("div", { class: sp }, el("b", { text: SPEC_NAME[sp] }), r ? (a.kind === "flex" ? r.name + " · " : "") : "", el("span", { class: "pill " + (r ? usageOf(actionId, sp) : "none"), text: r ? usageOf(actionId, sp) : "empty" })));
-  });
-  d.append(uses);
-  const r = resolve(actionId, view.spec);
-  if (a.kind === "macro") d.append(el("pre", { text: a.body }));
-  const txt = a.kind === "flex" ? (r ? r.text : "") : a.text;
-  if (txt) d.append(el("p", { class: "txt", text: txt }));
-  const note = a.kind === "flex" ? r?.notes : a.notes;
-  if (note) d.append(el("p", { class: "muted", text: note }));
-  const row = el("div", { class: "btn-row" },
-    el("button", { class: "btn danger", type: "button", text: "Unbind", onclick: () => { delete L().binds[id]; changed(); } }),
-    a.kind === "macro" ? el("button", { class: "btn", type: "button", text: "Copy macro", onclick: () => copy(a.body, "Macro copied.") }) : null,
-    el("button", { class: "btn", type: "button", text: "Close", onclick: () => { view.key = null; render(); } }));
-  d.append(row);
+  return true;
 }
+function openSheet(id) {
+  view.key = id; view.sheetQ = ""; $("#sheetQ").value = "";
+  if (!view.sheetCat) view.sheetCat = "suggested";
+  $("#sheetScrim").hidden = false;
+  renderSheet();
+  renderKeyboard(); renderMouse();
+  setTimeout(() => $("#sheetQ").focus({ preventScroll: true }), 30);
+}
+function closeSheet() {
+  const id = view.key;
+  $("#sheetScrim").hidden = true; view.key = null; renderKeyboard(); renderMouse();
+  const k = id && document.querySelector(`[data-key="${CSS.escape(id)}"]`); if (k) k.focus({ preventScroll: true });
+}
+function renderSheet() {
+  const id = view.key, sp = view.spec, cov = coveredIn(sp);
+  const actionId = L().binds[id], a = actionId && byId[actionId];
+  $("#sheetKey").textContent = keyLabel(id);
+  $("#sheetReach").textContent = `${SPEC_NAME[sp]} · reach: ${tierOfKey(id)}`;
+  const cur = $("#sheetCur"); cur.replaceChildren();
+  if (!a) cur.append(el("div", { class: "muted", text: "Nothing on this key yet. Pick an ability below." }));
+  else {
+    const uses = el("div", { class: "spec-uses" });
+    SPECS.forEach(s => { const r = resolve(actionId, s);
+      uses.append(el("div", { class: s }, el("b", { text: SPEC_NAME[s] }), r ? short(r.name, 20) + " " : "", el("span", { class: "pill " + (r ? usageOf(actionId, s) : "none"), text: r ? usageOf(actionId, s) : "empty" }))); });
+    const r = resolve(actionId, sp);
+    cur.append(el("div", {}, el("b", { text: "Now: " + a.name }), a.verify ? el("span", { class: "muted", text: " · verify in game" }) : null), uses);
+    const txt = a.kind === "macro" ? null : (a.kind === "flex" ? r?.text : a.text);
+    if (txt) cur.append(el("div", { class: "muted", text: short(txt, 220) }));
+    if (a.kind === "macro") cur.append(el("pre", { text: a.body }));
+    cur.append(el("div", { class: "btn-row", style: "margin:0" },
+      el("button", { class: "btn danger", type: "button", text: "Unbind", onclick: () => { delete L().binds[id]; changed(); renderSheet(); toast(`${keyLabel(id)} cleared.`); } }),
+      a.kind === "macro" ? el("button", { class: "btn", type: "button", text: "Copy macro", onclick: () => copy(a.body, "Macro copied.") }) : null));
+  }
+  const chips = $("#sheetChips"); chips.replaceChildren();
+  SHEET_CATS.forEach(([k, n]) => chips.append(el("button", { type: "button", class: "chip", "aria-pressed": String(view.sheetCat === k && !view.sheetQ), text: n, onclick: () => { view.sheetCat = k; view.sheetQ = ""; $("#sheetQ").value = ""; renderSheetList(); renderSheetChips(); } })));
+  renderSheetList();
+}
+function renderSheetChips() { document.querySelectorAll("#sheetChips .chip").forEach((c, i) => c.setAttribute("aria-pressed", String(SHEET_CATS[i][0] === view.sheetCat && !view.sheetQ))); }
+function renderSheetList() {
+  const id = view.key, sp = view.spec, cov = coveredIn(sp), q = view.sheetQ.trim().toLowerCase();
+  const list = $("#sheetList"); list.replaceChildren();
+  const cur = L().binds[id];
+  const items = Object.values(byId).filter(a => q ? (a.name.toLowerCase().includes(q) || (a.body || "").toLowerCase().includes(q)) : catMatch(a, view.sheetCat, sp, cov))
+    .sort((x, y) => {
+      const ux = x.kind === "flex" ? -1 : USAGE_RANK[x.usage?.[sp]] ?? 9, uy = y.kind === "flex" ? -1 : USAGE_RANK[y.usage?.[sp]] ?? 9;
+      return ux - uy || x.name.localeCompare(y.name);
+    });
+  if (!items.length) { list.append(el("p", { class: "muted", style: "padding:8px", text: view.sheetCat === "suggested" && !q ? `Everything ${SPEC_NAME[sp]} needs already has a key. Try “All”.` : "Nothing matches. Clear the search or pick another group." })); return; }
+  let lastGroup = null;
+  items.forEach(a => {
+    const u = a.kind === "flex" ? "talent-flex" : a.usage?.[sp] || "situational";
+    const grp = a.kind === "flex" ? "Flex slots (change with talents)" : (["core", "frequent"].includes(u) ? `${SPEC_NAME[sp]}: rotation` : ["cooldown", "talent-flex", "emergency"].includes(u) ? `${SPEC_NAME[sp]}: cooldowns & emergencies` : ["utility", "situational"].includes(u) ? "Situational & utility" : "Out of combat & other specs");
+    if (grp !== lastGroup) { list.append(el("div", { class: "opt-group", text: grp })); lastGroup = grp; }
+    const keys = keysFor(a.id);
+    let sub = [];
+    if (a.kind === "flex") sub.push(SPECS.map(s => `${SPEC_NAME[s][0]}: ${resolve(a.id, s)?.name || "—"}`).join(" · "));
+    else if (a.level > 1) sub.push("lvl " + a.level);
+    if (keys.length) sub.push("on " + keys.map(keyLabel).join(", "));
+    if (a.kind === "macro" && a.replaces) sub.push("macro for " + (byId[a.replaces]?.name || a.replaces));
+    list.append(el("button", { type: "button", class: "opt" + (a.level > view.level ? " locked" : "") + (cur === a.id ? " current" : ""), onclick: () => { assign(id, a.id); closeSheet(); } },
+      el("span", { class: "nm", text: a.name }),
+      el("span", { class: "right" }, el("span", { class: "kind", text: a.kind === "spell" ? (a.source === "talent" ? "talent" : "spell") : a.kind }), el("span", { class: "pill " + u, text: u })),
+      sub.length ? el("span", { class: "sub", text: sub.join(" · ") }) : null));
+  });
+}
+$("#sheetQ").addEventListener("input", e => { view.sheetQ = e.target.value; renderSheetChips(); renderSheetList(); });
+$("#sheetClose").addEventListener("click", closeSheet);
+$("#sheetScrim").addEventListener("click", e => { if (e.target === $("#sheetScrim")) closeSheet(); });
+
+// ================= PLAN: side panels =================
 function renderCoverage() {
   const sp = view.spec, cov = coveredIn(sp);
   $("#covSpec").textContent = SPEC_NAME[sp] + " · level " + view.level;
-  const needed = Object.values(byId).filter(a => (a.kind === "spell" || a.kind === "racial" || a.kind === "general") && NEED.includes(a.usage?.[sp]) && a.level <= view.level);
+  const needed = Object.values(byId).filter(a => ["spell", "racial", "general"].includes(a.kind) && NEED.includes(a.usage?.[sp]) && a.level <= view.level && (a.source !== "talent" || knownIn(a.id, sp, view.level)));
   const missing = needed.filter(a => !cov.has(a.id)).sort((x, y) => USAGE_RANK[x.usage[sp]] - USAGE_RANK[y.usage[sp]]);
   const core = needed.filter(a => a.usage[sp] === "core");
-  const coreOnGood = core.filter(a => cov.has(a.id) && cov.get(a.id).some(k => ["best", "good"].includes(tierOfKey(k))));
-  const score = $("#covScore"); score.replaceChildren(
+  const coreGood = core.filter(a => cov.has(a.id) && cov.get(a.id).some(k => ["best", "good"].includes(tierOfKey(k))));
+  $("#covScore").replaceChildren(
     el("div", {}, el("b", { text: `${needed.length - missing.length}/${needed.length}` }), el("span", { text: "needed abilities bound" })),
-    el("div", {}, el("b", { text: `${coreOnGood.length}/${core.length}` }), el("span", { text: "core on easy reach" })),
-    el("div", {}, el("b", { text: String(Object.keys(L().binds).length) }), el("span", { text: "keys in use" })),
-  );
+    el("div", {}, el("b", { text: `${coreGood.length}/${core.length}` }), el("span", { text: "core on easy reach" })),
+    el("div", {}, el("b", { text: String(Object.keys(L().binds).length) }), el("span", { text: "keys in use" })));
   const list = $("#covList"); list.replaceChildren();
   if (!missing.length) list.append(el("li", { class: "ok", text: `Every core, cooldown, emergency and utility ability for ${SPEC_NAME[sp]} has a key.` }));
-  missing.slice(0, 12).forEach(a => list.append(el("li", {},
-    el("span", { class: "pill " + a.usage[sp], text: a.usage[sp] }),
-    el("button", { type: "button", class: "chip", text: a.name + " — bind", onclick: () => startPick(a.id) }))));
+  missing.slice(0, 12).forEach(a => list.append(el("li", {}, el("span", { class: "pill " + a.usage[sp], text: a.usage[sp] }),
+    el("button", { type: "button", class: "chip", text: a.name + " — pick a key", onclick: () => startPick(a.id) }))));
   if (missing.length > 12) list.append(el("li", { class: "muted", text: `+${missing.length - 12} more` }));
 }
 function renderFlex() {
   const t = $("#flexTable"); t.replaceChildren();
   t.append(el("tr", {}, el("th", { text: "Slot" }), el("th", { text: "Key" }), ...SPECS.map(s => el("th", { text: SPEC_NAME[s] }))));
   FLEX_IDS.forEach(f => {
-    const keys = keysFor(f);
-    const tr = el("tr", {}, el("td", { text: f.replace("FLEX-", "") }), el("td", { class: "k", text: keys.join(", ") || "—" }));
+    const tr = el("tr", {}, el("td", { text: f.replace("FLEX-", "") }), el("td", { class: "k", text: keysFor(f).map(keyLabel).join(", ") || "—" }));
     SPECS.forEach(sp => {
       const sel = el("select", { id: `flex-${f}-${sp}`, "aria-label": `${f} for ${SPEC_NAME[sp]}`, onchange: e => { L().flex[f][sp] = e.target.value || null; changed(); } });
       sel.append(el("option", { value: "", text: "— empty —" }));
@@ -522,91 +720,49 @@ function renderFlex() {
   });
 }
 
-// ---------- palette ----------
-const CATS = [["all", "All"], ["need", "Unbound needs"], ["heal", "Heals"], ["strike", "Melee"], ["seal", "Seals"], ["judgement", "Judgement"], ["defensive", "Defensive"], ["blessing", "Blessings"], ["aura", "Auras"], ["macro", "Macros"], ["talent", "Talents"], ["general", "General"], ["flex", "Flex"]];
-function renderChips() {
-  const c = $("#chips"); c.replaceChildren();
-  CATS.forEach(([k, n]) => c.append(el("button", { type: "button", class: "chip", "aria-pressed": String(view.cat === k), text: n, onclick: () => { view.cat = k; renderPalette(); renderChips(); } })));
-}
-function renderPalette() {
-  const sp = view.spec, cov = coveredIn(sp), q = view.q.trim().toLowerCase();
-  const pal = $("#pal"); pal.replaceChildren();
-  const items = Object.values(byId).filter(a => {
-    if (q && !(a.name.toLowerCase().includes(q) || (a.body || "").toLowerCase().includes(q))) return false;
-    switch (view.cat) {
-      case "all": return true;
-      case "need": return a.kind !== "flex" && a.kind !== "macro" && NEED.includes(a.usage?.[sp]) && !cov.has(a.id);
-      case "macro": return a.kind === "macro";
-      case "talent": return a.source === "talent";
-      case "general": return a.kind === "general" || a.kind === "racial";
-      case "flex": return a.kind === "flex";
-      case "heal": return a.category === "heal" || a.category === "dispel";
-      case "strike": return ["strike", "aoe", "damage"].includes(a.category);
-      case "defensive": return ["defensive", "emergency"].includes(a.category);
-      default: return a.category === view.cat;
-    }
-  }).sort((x, y) => {
-    const ux = x.kind === "flex" ? -1 : USAGE_RANK[x.usage?.[sp]] ?? 9, uy = y.kind === "flex" ? -1 : USAGE_RANK[y.usage?.[sp]] ?? 9;
-    return ux - uy || x.name.localeCompare(y.name);
-  });
-  if (!items.length) { pal.append(el("p", { class: "muted", text: "Nothing matches. Clear the search or pick another filter." })); return; }
-  items.forEach(a => {
-    const keys = keysFor(a.id);
-    const u = a.kind === "flex" ? "talent-flex" : a.usage?.[sp] || "situational";
-    const needUnbound = a.kind !== "flex" && a.kind !== "macro" && NEED.includes(u) && !cov.has(a.id);
-    const b = el("button", { type: "button", class: "ab" + (a.level > view.level ? " locked" : "") + (needUnbound ? " unbound-need" : ""),
-      draggable: "true", "aria-pressed": String(view.pick === a.id), onclick: () => startPick(view.pick === a.id ? null : a.id) },
-      el("div", { class: "row1" }, el("span", { class: "nm", text: a.name }), el("span", { class: "kind", text: a.kind === "spell" ? (a.source === "talent" ? "talent" : "spell") : a.kind })),
-      el("div", { class: "row2" }, el("span", { class: "pill " + u, text: u }),
-        el("span", { class: "keys", text: keys.length ? keys.join(" · ") : (a.level > 1 ? "lvl " + a.level : "") })));
-    b.addEventListener("dragstart", e => { e.dataTransfer.setData("text/plain", a.id); e.dataTransfer.effectAllowed = "copy"; });
-    pal.append(b);
-  });
-}
-
-// ---------- interactions ----------
+// ================= PLAN: interactions =================
 function startPick(aid) {
-  view.pick = aid; $("#assignBar").hidden = !aid;
-  if (aid) $("#assignName").textContent = byId[aid].name;
-  renderKeyboard(); renderMouse(); renderPalette();
-  if (aid && window.matchMedia("(max-width: 900px)").matches) $("#kb").scrollIntoView({ behavior: "smooth", block: "start" });
+  view.pick = aid; $("#pickBar").hidden = !aid;
+  if (aid) $("#pickName").textContent = byId[aid].name;
+  renderKeyboard(); renderMouse();
+  if (aid) $("#kb").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 function onKey(id) {
-  if (view.pick) { assign(id, view.pick); return; }
-  view.key = view.key === id ? null : id; render();
+  if (view.pick) { const aid = view.pick; startPick(null); assign(id, aid); return; }
+  openSheet(id);
 }
 function assign(id, aid) {
-  L().binds[id] = aid;
-  view.key = id; view.pick = null; $("#assignBar").hidden = true;
-  changed();
-  toast(`${byId[aid].name} → ${id.replace(/M-/g, "Mouse ")}`);
+  L().binds[id] = aid; changed();
+  toast(`${byId[aid].name} → ${keyLabel(id)}`);
 }
 function setLayer(l) { view.layer = l; render(); }
-document.querySelectorAll(".seg.spec button").forEach(b => b.addEventListener("click", () => {
-  view.spec = b.dataset.spec; document.querySelectorAll(".seg.spec button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
-  rememberView(); render();
-}));
+$("#pickCancel").addEventListener("click", () => startPick(null));
+document.querySelectorAll(".seg.spec button").forEach(b => b.addEventListener("click", () => { view.spec = b.dataset.spec; rememberView(); render(); }));
 document.querySelectorAll(".seg.layer button").forEach(b => b.addEventListener("click", () => setLayer(b.dataset.layer)));
 $("#lvl").addEventListener("input", e => { view.level = +e.target.value; $("#lvlOut").textContent = view.level; render(); });
-$("#q").addEventListener("input", e => { view.q = e.target.value; renderPalette(); });
 $("#tilt").addEventListener("change", e => { view.tilt = e.target.checked; rememberView(); renderMouse(); });
-$("#assignCancel").addEventListener("click", () => startPick(null));
-document.addEventListener("keydown", e => { if (e.key === "Escape" && view.pick) startPick(null); });
+document.addEventListener("keydown", e => {
+  if (!$("#arena").hidden) return;
+  if (e.key === "Escape") { if (!$("#sheetScrim").hidden) closeSheet(); else if (view.pick) startPick(null); }
+});
 function rememberView() { try { localStorage.setItem("lk-view", JSON.stringify({ spec: view.spec, tilt: view.tilt })); } catch (e) {} }
 
 function render() {
   document.querySelectorAll(".seg.layer button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.layer === view.layer)));
   document.querySelectorAll(".seg.spec button").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.spec === view.spec)));
   $("#tilt").checked = view.tilt;
-  renderKeyboard(); renderMouse(); renderDetail(); renderCoverage(); renderFlex(); renderPalette(); renderLayouts();
+  $("#layerSeg").hidden = view.tab !== "plan";
+  renderLayouts();
+  if (view.tab === "plan") { renderKeyboard(); renderMouse(); renderCoverage(); renderFlex(); if (!$("#sheetScrim").hidden) renderSheet(); }
+  else renderPracticeSetup();
 }
 
-// ---------- layouts ----------
+// ================= layouts =================
 function renderLayouts() {
-  const s = $("#laySel"); s.replaceChildren();
-  Object.keys(store.layouts).forEach(n => s.append(el("option", { value: n, text: n, selected: n === store.current })));
+  ["#laySel", "#laySelTop"].forEach(sel => { const s = $(sel); s.replaceChildren();
+    Object.keys(store.layouts).forEach(n => s.append(el("option", { value: n, text: n, selected: n === store.current }))); });
 }
-$("#laySel").addEventListener("change", e => { store.current = e.target.value; view.key = null; changed(); });
+["#laySel", "#laySelTop"].forEach(sel => $(sel).addEventListener("change", e => { store.current = e.target.value; changed(); }));
 $("#layDup").addEventListener("click", () => {
   const n = $("#layName").value.trim() || store.current + " copy";
   if (store.layouts[n]) { toast(`A layout called "${n}" already exists. Pick another name.`); return; }
@@ -628,8 +784,8 @@ function bindListText() {
   const order = k => [k.startsWith("Shift") ? 1 : k.startsWith("Ctrl") ? 2 : k.startsWith("Alt") ? 3 : 0, k];
   Object.entries(L().binds).sort((a, b) => { const x = order(a[0]), y = order(b[0]); return x[0] - y[0] || x[1].localeCompare(y[1]); }).forEach(([k, v]) => {
     const a = byId[v]; if (!a) return;
-    if (a.kind === "flex") lines.push(`${k.padEnd(14)} ${a.name}: ` + SPECS.map(sp => `${SPEC_NAME[sp]}=${resolve(v, sp)?.name || "—"}`).join(", "));
-    else lines.push(`${k.padEnd(14)} ${a.name}${a.kind === "macro" ? " (macro)" : ""}`);
+    if (a.kind === "flex") lines.push(`${keyLabel(k).padEnd(16)} ${a.name}: ` + SPECS.map(sp => `${SPEC_NAME[sp]}=${resolve(v, sp)?.name || "—"}`).join(", "));
+    else lines.push(`${keyLabel(k).padEnd(16)} ${a.name}${a.kind === "macro" ? " (macro)" : ""}`);
   });
   const macros = [...new Set(Object.values(L().binds))].map(v => byId[v]).filter(a => a && a.kind === "macro");
   if (macros.length) { lines.push("", "Macros:"); macros.forEach(m => lines.push("", `-- ${m.name}`, m.body)); }
@@ -647,11 +803,595 @@ $("#impJson").addEventListener("click", () => {
 });
 async function copy(text, msg) {
   try { await navigator.clipboard.writeText(text); toast(msg); }
-  catch (e) { const io = $("#io"); io.value = text; io.closest("details").open = true; io.focus(); io.select(); toast("Copy blocked here. The text is selected in the box: copy it from there."); }
+  catch (e) { const io = $("#io"); io.value = text; io.closest("details").open = true; io.focus(); io.select(); toast("Copy was blocked. The text is selected in the export box: copy it from there."); }
 }
 let toastT; function toast(m) { $("#toast").textContent = m; clearTimeout(toastT); toastT = setTimeout(() => $("#toast").textContent = "", 4000); }
 
-// ---------- persistence ----------
+// ================= routing =================
+function route() {
+  view.tab = location.hash === "#practice" ? "practice" : "plan";
+  $("#viewPlan").hidden = view.tab !== "plan"; $("#viewPractice").hidden = view.tab !== "practice";
+  $("#tabPlan").setAttribute("aria-current", view.tab === "plan" ? "page" : "false");
+  $("#tabPractice").setAttribute("aria-current", view.tab === "practice" ? "page" : "false");
+  render();
+}
+window.addEventListener("hashchange", route);
+
+// =====================================================================
+// ========================== PRACTICE =================================
+// =====================================================================
+// ---- input signatures (what the browser sees) -> our key ids ----
+const CODE_NAME = c => {
+  if (/^Digit\d$/.test(c)) return c.slice(5);
+  if (/^Key[A-Z]$/.test(c)) return c.slice(3);
+  if (/^F\d{1,2}$/.test(c)) return c;
+  if (/^Numpad\d$/.test(c)) return "Num" + c.slice(6);
+  return ({ Backquote: "`", Tab: "Tab", CapsLock: "Caps", Space: "Space", Minus: "-", Equal: "=", BracketLeft: "[", BracketRight: "]", Semicolon: ";", Quote: "'", Comma: ",", Period: ".", Slash: "/", Backslash: "\\" })[c] || null;
+};
+const MOUSE_BTNS = ["M-S1", "M-S2", "M-S3", "M-S4", "M-S5", "M-S6", "M-MMB", "M-WUP", "M-WDN", "M-TOP1", "M-TOP2", "M-TILTL", "M-TILTR"];
+const DEFAULT_SIGS = { "mouse:1": "M-MMB", "wheel:up": "M-WUP", "wheel:down": "M-WDN", "wheel:left": "M-TILTL", "wheel:right": "M-TILTR" };
+let sigMap = { ...DEFAULT_SIGS };
+try { const s = JSON.parse(localStorage.getItem("lk-mouse") || "null"); if (s && typeof s === "object") sigMap = s; } catch (e) {}
+const saveSig = () => { try { localStorage.setItem("lk-mouse", JSON.stringify(sigMap)); } catch (e) {} };
+let learning = null;
+const sigLabel = s => s.replace("key:", "key ").replace("mouse:1", "middle click").replace("mouse:3", "mouse back").replace("mouse:4", "mouse forward").replace("wheel:", "wheel ");
+function renderLearn() {
+  const box = $("#learnList"); box.replaceChildren();
+  MOUSE_BTNS.filter(b => view.tilt || !b.startsWith("M-TILT")).forEach(b => {
+    const sig = Object.keys(sigMap).find(k => sigMap[k] === b);
+    box.append(el("div", { class: "learn-row" + (learning === b ? " listening" : "") },
+      el("span", { text: MOUSE_LABEL[b] }),
+      el("span", { class: "sig", text: learning === b ? "press it now… (Esc cancels)" : sig ? sigLabel(sig) : "not learned" }),
+      el("button", { class: "btn", type: "button", text: learning === b ? "Cancel" : "Learn", onclick: () => { learning = learning === b ? null : b; renderLearn(); } })));
+  });
+}
+function learnSig(sig) {
+  for (const k of Object.keys(sigMap)) if (sigMap[k] === learning || k === sig) delete sigMap[k];
+  sigMap[sig] = learning; const b = learning; learning = null; saveSig(); renderLearn();
+  const kb = sig.startsWith("key:") ? sig.slice(4) : null;
+  if (kb && Object.keys(L().binds).some(k => k === kb || k.endsWith("-" + kb))) toast(`${MOUSE_LABEL[b]} sends “${kb}”, which is also a keyboard key in your layout. In the simulator it now counts as ${MOUSE_LABEL[b]}.`);
+}
+$("#learnReset").addEventListener("click", () => { sigMap = { ...DEFAULT_SIGS }; saveSig(); renderLearn(); });
+window.addEventListener("keydown", e => {
+  if (!learning) return;
+  e.preventDefault();
+  if (e.key === "Escape") { learning = null; renderLearn(); return; }
+  if (["Shift", "Control", "Alt", "Meta"].includes(e.key)) return;
+  const n = CODE_NAME(e.code); if (n) learnSig("key:" + n);
+}, true);
+window.addEventListener("mousedown", e => { if (learning && e.button !== 0 && e.button !== 2) { e.preventDefault(); learnSig("mouse:" + e.button); } }, true);
+window.addEventListener("wheel", e => { if (learning) { e.preventDefault(); learnSig(Math.abs(e.deltaX) > Math.abs(e.deltaY) ? (e.deltaX < 0 ? "wheel:left" : "wheel:right") : (e.deltaY < 0 ? "wheel:up" : "wheel:down")); } }, { passive: false, capture: true });
+
+// ---- sim ability model ----
+const parseSec = (s, re) => { const m = (s || "").match(re); if (!m) return 0; const v = parseFloat(m[1]); return m[2].startsWith("min") ? v * 60 : m[2].startsWith("hr") ? v * 3600 : v; };
+const OFF_GCD = new Set(["divine-favor", "stoneform", "healthstone", "health-potion", "mana-potion", "trinket-1", "trinket-2", "stopcasting", "target-self", "target-party", "target-nearest", "assist", "start-attack", "interact", "swift-judgement"]);
+const ITEM_CD = { healthstone: 120, "health-potion": 120, "mana-potion": 120, "trinket-1": 90, "trinket-2": 120 };
+function simInfo(id) {
+  const a = byId[id]; const cost = a?.cost || "";
+  let cd = parseSec(cost, /(\d+(?:\.\d+)?)\s*(sec|min|hr)\s*cooldown/) || ITEM_CD[id] || 0;
+  if (!cd && a?.kind === "racial") cd = parseSec(cost, /(\d+(?:\.\d+)?)\s*(sec|min|hr)/);
+  const cast = parseSec(cost, /(\d+(?:\.\d+)?)\s*(sec)\s*cast/);
+  return { cd, cast, gcd: !OFF_GCD.has(id) };
+}
+// What a macro does given the modifiers held (mirrors the macro bodies in data/macros.json)
+const MACRO_FX = {
+  "m-holylight": m => m.shift ? "holy-light-low" : "holy-light",
+  "m-loh": m => "lay-on-hands",
+  "m-defensive": m => m.shift ? "divine-protection" : "divine-shield",
+  "m-seal-ret": m => m.shift ? "seal-of-righteousness" : "seal-of-command",
+  "m-seal-main": m => m.shift ? "seal-of-wisdom" : m.ctrl ? "seal-of-light" : "seal-of-fury",
+  "m-judge-heal": m => m.shift ? "seal-of-wisdom" : "judgement",
+  "m-potion": m => m.shift ? "health-potion" : "healthstone",
+  "m-trinkets": m => m.shift ? "trinket-2" : "trinket-1",
+  "m-blessing": m => m.shift ? "greater-blessing-of-kings" : "blessing-of-kings",
+  "m-favor": () => "divine-favor+holy-light",
+  "m-stopcast-heal": () => "stopcast+flash-of-light",
+  "m-salv-cancel": () => "noop",
+};
+const MOUSEOVER = new Set(["m-flash", "m-holylight", "m-holyshock", "m-vigil", "m-oath", "m-favor", "m-cleanse", "m-stopcast-heal", "m-bop", "m-freedom", "m-sac", "m-loh", "m-rez"]);
+
+// ---- events (prompts that test reaction to a situation) ----
+const EVENTS = [
+  { id: "taunt", specs: ["prot"], kind: "Threat", text: "Loose add is hitting the healer. Taunt it!", accept: ["judgement", "swift-judgement"], need: s => s.seal === "seal-of-fury" },
+  { id: "stun", specs: ["holy", "prot", "ret"], kind: "Interrupt", text: "Caster is channelling a heal. Stun it!", accept: ["hammer-of-justice", "repentance"] },
+  { id: "poison", specs: ["holy", "prot", "ret"], kind: "Debuff", text: "You're poisoned. Get it off.", accept: ["cleanse", "purify", "stoneform"] },
+  { id: "bleed", specs: ["prot", "ret"], kind: "Debuff", text: "Deep bleed ticking on you.", accept: ["stoneform"] },
+  { id: "root", specs: ["holy", "prot", "ret"], kind: "Movement", text: "You're rooted in the fire!", accept: ["blessing-of-freedom"] },
+  { id: "lowhp", specs: ["holy", "prot", "ret"], kind: "Emergency", text: "You're at 15% health!", accept: ["divine-shield", "divine-protection", "lay-on-hands", "healthstone", "health-potion", "templars-bulwark"] },
+  { id: "ally", specs: ["prot", "ret"], kind: "Emergency", text: "The mage is at 10% and being chased!", accept: ["blessing-of-protection", "lay-on-hands", "flash-of-light"] },
+  { id: "silence", specs: ["holy"], kind: "Cast", text: "Boss is casting Silencing Shriek. Protect your casts!", accept: ["voice-of-truth"] },
+  { id: "undead", specs: ["prot", "ret"], kind: "AoE", text: "Undead swarm pours in. Hit them all!", accept: ["holy-wrath", "consecration", "hammer-of-the-righteous"] },
+  { id: "humanoid", specs: ["ret"], kind: "Control", text: "Humanoid add charging you. Lock it down!", accept: ["repentance", "hammer-of-justice"] },
+  { id: "oom", specs: ["holy"], kind: "Mana", text: "You're at 15% mana.", accept: ["mana-potion"] },
+  { id: "bop-holy", specs: ["holy"], kind: "Emergency", text: "The rogue has aggro on a big hitter!", accept: ["blessing-of-protection"] },
+];
+
+// ---- practice setup UI ----
+const MODES = {
+  fight: { name: "Fight + events", desc: { prot: "Tank a boss and adds: keep Seal of Fury, Holy Shield and threat up while events pop.", ret: "Damage rotation on a boss with execute phase and add events.", holy: "Heal a 5-player party through tank damage, spikes, debuffs and events." } },
+  react: { name: "Reaction drill", desc: { holy: "Only prompts. Fast-fire situations to test how quickly you find each key.", prot: "Only prompts. Fast-fire situations to test how quickly you find each key.", ret: "Only prompts. Fast-fire situations to test how quickly you find each key." } },
+};
+let pracMode = "fight";
+function renderPracticeSetup() {
+  $("#pracSpec").textContent = `${SPEC_NAME[view.spec]} · level ${view.level} · layout “${store.current}”`;
+  const mc = $("#modeCards"); mc.replaceChildren();
+  Object.entries(MODES).forEach(([k, m]) => mc.append(el("button", { type: "button", class: "mode-card", "aria-pressed": String(pracMode === k), onclick: () => { pracMode = k; renderPracticeSetup(); } },
+    el("b", { text: m.name }), el("span", { text: m.desc[view.spec] }))));
+  renderLearn(); renderHistory();
+}
+function renderHistory() {
+  const h = $("#history"); h.replaceChildren();
+  const runs = (store.runs || []).slice(-8).reverse();
+  if (!runs.length) { h.append(el("p", { class: "muted", style: "margin:0", text: "No runs yet. Your last 30 runs are kept here with the layout they used." })); return; }
+  const t = el("table", { class: "tbl" }, el("tr", {}, el("th", { text: "When" }), el("th", { text: "Spec / mode" }), el("th", { class: "n", text: "Hit" }), el("th", { class: "n", text: "Avg" }), el("th", { class: "n", text: "Fumbles" })));
+  runs.forEach(r => t.append(el("tr", {}, el("td", { text: new Date(r.at).toLocaleDateString(undefined, { month: "short", day: "numeric" }) + " " + new Date(r.at).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }) }),
+    el("td", { text: `${SPEC_NAME[r.spec]} · ${MODES[r.mode]?.name || r.mode}`, title: r.layout }),
+    el("td", { class: "n", text: r.events ? Math.round(100 * r.hits / r.events) + "%" : "—" }),
+    el("td", { class: "n", text: r.avgRt ? r.avgRt.toFixed(2) + "s" : "—" }),
+    el("td", { class: "n", text: String(r.fumbles) }))));
+  h.append(el("div", { class: "scroll-x" }, t));
+}
+$("#pStart").addEventListener("click", () => startRun());
+
+// ---- the run ----
+let S = null; // sim state
+function startRun() {
+  view.simSpec = view.spec;
+  const spec = view.spec, dur = +$("#pDur").value, pace = +$("#pDiff").value;
+  S = {
+    spec, mode: pracMode, dur, pace, hints: $("#pHints").checked, realCd: $("#pRealCd").checked, level: view.level,
+    t: 0, last: performance.now(), paused: false, done: false,
+    gcdUntil: 0, cds: {}, cast: null, mods: { shift: false, ctrl: false, alt: false },
+    seal: null, sealUntil: 0, rf: spec !== "prot", holyShieldUntil: 0, favor: false, vigil: null, oath: null, bopUntil: {},
+    boss: { hp: 1, undead: false, adds: 0 }, nextEvent: 4, event: null,
+    score: 0, presses: 0, fumbles: 0, idle: 0, gcdsUsed: 0, perfect: 0,
+    stats: {}, keyStats: {}, log: [],
+    party: null, mana: 1, hover: null, sel: 4, healDone: 0, overheal: 0, deaths: 0, lowSince: {},
+  };
+  if (spec === "holy" && S.mode === "fight") S.party = [
+    { name: "Brann", role: "Tank", hp: 1, dot: null }, { name: "Kaelis", role: "Rogue", hp: 1, dot: null },
+    { name: "Mira", role: "Mage", hp: 1, dot: null }, { name: "Toby", role: "Hunter", hp: 1, dot: null }, { name: "You", role: "Paladin", hp: 1, dot: null, self: true }];
+  S.evLog = [];
+  if (S.mode === "react" && spec === "prot") { S.seal = "seal-of-fury"; S.sealUntil = Infinity; }
+  S.timers = { tank: 0, rand: 2, aoe: 14, debuff: 7, spike: 10, adds: 15, phase: 0 };
+  $("#arena").hidden = false; $("#aPaused").hidden = true; $("#results").hidden = true;
+  $("#aMode").textContent = `${SPEC_NAME[spec]} · ${MODES[S.mode].name}${S.hints ? " · hints on" : ""}`;
+  $("#aLog").replaceChildren();
+  buildBar(); renderEnc();
+  $("#arena").focus({ preventScroll: true });
+  logLine(S.spec === "prot" && S.mode === "fight" ? "Pull! Start with Righteous Fury and Seal of Fury." : S.spec === "ret" && S.mode === "fight" ? "Pull! Put your Seal up and start your rotation." : S.mode === "fight" ? "Pull! Keep the party alive. Hover a frame and press a heal key." : "Get ready: prompts start in a few seconds.", "meh");
+  requestAnimationFrame(tick);
+}
+function stat(id) { return S.stats[id] || (S.stats[id] = { prompts: 0, hits: 0, rts: [], fumbles: 0, presses: 0, keys: new Set() }); }
+function keyStat(k) { return S.keyStats[k] || (S.keyStats[k] = { presses: 0, fumbles: 0, unbound: 0 }); }
+function ready(id) { const info = simInfo(id); const cdOn = info.cd <= 30 || S.realCd; return !cdOn || (S.cds[id] || 0) <= S.t + .05; }
+function cdLeft(id) { const info = simInfo(id); if (info.cd > 30 && !S.realCd) return 0; return Math.max(0, (S.cds[id] || 0) - S.t); }
+function known(id) { if (id === "purify" && S.level >= 42) return false; return knownIn(id, S.spec, S.level); }
+
+// --- action bar: keys bound to things this spec cares about ---
+let barSlots = [];
+function buildBar() {
+  const bar = $("#aBar"); bar.replaceChildren(); barSlots = [];
+  const entries = Object.entries(L().binds).map(([k, v]) => ({ k, a: resolve(v, S.spec), raw: byId[v] }))
+    .filter(x => x.a && x.a.level <= S.level && !["ooc", "none", "buff", "lowlevel"].includes(x.a.usage?.[S.spec]) && (x.a.source !== "talent" || known(x.a.id)))
+    .sort((x, y) => (USAGE_RANK[x.a.usage[S.spec]] ?? 9) - (USAGE_RANK[y.a.usage[S.spec]] ?? 9) || x.k.localeCompare(y.k));
+  // always include rotation buffs for prot/ret
+  const extra = S.spec === "prot" ? ["righteous-fury", "seal-of-fury"] : S.spec === "ret" ? ["seal-of-command", "seal-of-righteousness"] : [];
+  extra.forEach(id => Object.entries(L().binds).forEach(([k, v]) => { const r = resolve(v, S.spec); if (r && (r.id === id || (r.kind === "macro" && fxIds(r).includes(id))) && !entries.some(e => e.k === k)) entries.unshift({ k, a: r, raw: byId[v] }); }));
+  entries.slice(0, 22).forEach(x => {
+    const sid = primaryOf(x.a);
+    const s = el("button", { type: "button", class: "slot", tabindex: "-1", "data-key": x.k, onclick: () => { press(x.k, "tap"); $("#arena").focus({ preventScroll: true }); } },
+      el("span", { class: "k", text: keyLabel(x.k) }), el("span", { class: "n", text: x.a.name }),
+      el("span", { class: "cd" }), el("span", { class: "cdt" }));
+    barSlots.push({ node: s, k: x.k, sid });
+    bar.append(s);
+  });
+  if (!entries.length) bar.append(el("span", { class: "muted", text: "No bound abilities for this spec yet. End the run and bind some keys on the Plan tab." }));
+}
+function fxIds(a) { if (a.kind !== "macro") return [a.id]; return [a.replaces, ...(a.covers || [])].filter(Boolean); }
+function primaryOf(a) { return a.kind === "macro" ? (a.replaces || a.covers?.[0] || a.id) : a.id; }
+
+// --- encounter rendering ---
+function renderEnc() {
+  const enc = $("#aEnc"); enc.replaceChildren();
+  if (S.mode === "react") {
+    enc.append(el("div", { class: "target-card" }, el("div", { class: "tn" }, el("h3", { text: "Reaction drill" }), el("span", { class: "muted", text: "Answer each prompt with the right key." })),
+      el("p", { class: "muted", style: "margin:0", text: "Wrong keys count as fumbles. Unbound answers are flagged so you can add them to your layout." })));
+    return;
+  }
+  if (S.spec === "holy") {
+    const party = el("div", { class: "party", id: "party" });
+    S.party.forEach((p, i) => {
+      const f = el("div", { class: "frame", "data-i": i, onpointerenter: () => { S.hover = i; markFrames(); }, onpointerleave: () => { if (S.hover === i) S.hover = null; markFrames(); }, onclick: () => { S.sel = i; markFrames(); } },
+        el("div", { class: "fn" }, el("span", { text: `${p.name} · ${p.role}` }), el("span", { class: "mono", "data-hp": i })),
+        el("div", { class: "bar" }, el("i", { "data-bar": i })),
+        el("div", { class: "marks", "data-marks": i }));
+      party.append(f);
+    });
+    enc.append(el("div", { class: "target-card" }, el("div", { class: "tn" }, el("h3", { text: "Party" }), el("span", { class: "muted", text: "Hover = mouseover target · click = select" }))), party,
+      el("div", { class: "target-card" }, el("div", { class: "tn" }, el("b", { text: "Mana" }), el("span", { class: "mono", id: "manaTxt" })), el("div", { class: "bar mana" }, el("i", { id: "manaBar" }))));
+    markFrames();
+  } else {
+    enc.append(el("div", { class: "target-card" },
+      el("div", { class: "tn" }, el("h3", { id: "bossName", text: "Gorvath the Unyielding" }), el("span", { class: "muted", id: "bossType" })),
+      el("div", { class: "bar enemy" }, el("i", { id: "bossBar" }), el("span", { id: "bossPct" })),
+      el("div", { class: "buffs", id: "buffs" })));
+  }
+}
+function markFrames() {
+  if (!S?.party) return;
+  document.querySelectorAll(".frame").forEach(f => { const i = +f.dataset.i; f.classList.toggle("hover", S.hover === i); f.classList.toggle("sel", S.sel === i); });
+}
+function updateEnc() {
+  if (S.mode === "react") return;
+  if (S.spec === "holy") {
+    S.party.forEach((p, i) => {
+      const b = document.querySelector(`[data-bar="${i}"]`); if (!b) return;
+      b.style.width = Math.max(0, p.hp * 100) + "%";
+      b.style.background = p.hp < .35 ? "var(--crit)" : p.hp < .7 ? "var(--warn)" : "var(--core)";
+      document.querySelector(`[data-hp="${i}"]`).textContent = p.dead ? "dead" : Math.round(p.hp * 100) + "%";
+      document.querySelector(`.frame[data-i="${i}"]`).classList.toggle("dead", !!p.dead);
+      const mk = document.querySelector(`[data-marks="${i}"]`); mk.replaceChildren();
+      if (p.dot) mk.append(el("span", { class: "mk " + p.dot, text: p.dot }));
+      if (S.vigil === i) mk.append(el("span", { class: "mk vigil", text: "Vigil" }));
+      if (S.oath === i) mk.append(el("span", { class: "mk oath", text: "Oath" }));
+      if ((S.bopUntil[i] || 0) > S.t) mk.append(el("span", { class: "mk bop", text: "Protected" }));
+    });
+    $("#manaBar").style.width = Math.max(0, S.mana * 100) + "%"; $("#manaTxt").textContent = Math.round(S.mana * 100) + "%";
+  } else {
+    $("#bossBar").style.width = S.boss.hp * 100 + "%"; $("#bossPct").textContent = Math.round(S.boss.hp * 100) + "%";
+    $("#bossType").textContent = (S.boss.undead ? "Undead" : "Humanoid") + (S.boss.adds ? ` · ${S.boss.adds} adds` : "");
+    const bf = $("#buffs"); bf.replaceChildren();
+    const sealName = S.seal ? byId[S.seal]?.name : null;
+    bf.append(el("span", { class: "buff" + (S.seal && S.sealUntil > S.t ? "" : " missing"), text: sealName && S.sealUntil > S.t ? `${sealName} ${Math.ceil(S.sealUntil - S.t)}s` : "No Seal" }));
+    if (S.spec === "prot") {
+      bf.append(el("span", { class: "buff" + (S.rf ? "" : " missing"), text: S.rf ? "Righteous Fury" : "No Righteous Fury" }));
+      if (known("holy-shield")) bf.append(el("span", { class: "buff" + (S.holyShieldUntil > S.t ? "" : " missing"), text: S.holyShieldUntil > S.t ? `Holy Shield ${Math.ceil(S.holyShieldUntil - S.t)}s` : "Holy Shield down" }));
+    }
+  }
+}
+function updateBar() {
+  const next = S.hints && S.mode === "fight" && S.spec !== "holy" ? nextBest() : null;
+  barSlots.forEach(s => {
+    const left = cdLeft(s.sid), info = simInfo(s.sid);
+    const gcdLeft = info.gcd ? Math.max(0, S.gcdUntil - S.t) : 0;
+    const l = Math.max(left, gcdLeft), tot = left > gcdLeft ? info.cd : 1.5;
+    s.node.querySelector(".cd").style.height = l > 0 ? Math.min(100, 100 * l / (tot || 1)) + "%" : "0";
+    s.node.querySelector(".cdt").textContent = left > 1.5 ? Math.ceil(left) : "";
+    s.node.classList.toggle("next", !!next && s.sid === next);
+  });
+}
+function logLine(text, cls = "") {
+  const log = $("#aLog");
+  log.prepend(el("div", { class: "ln " + cls, text }));
+  while (log.children.length > 9) log.lastChild.remove();
+}
+function flashSlot(k, good) {
+  const s = barSlots.find(x => x.k === k); if (!s) return;
+  s.node.classList.add(good ? "flash-good" : "flash-bad"); setTimeout(() => s.node.classList.remove("flash-good", "flash-bad"), 250);
+}
+
+// --- rotation priority (prot / ret) ---
+function nextBest() {
+  const sp = S.spec, k = id => known(id) && ready(id) && S.gcdUntil <= S.t + .05;
+  if (sp === "prot") {
+    if (!S.rf && known("righteous-fury")) return "righteous-fury";
+    if ((S.seal !== "seal-of-fury" || S.sealUntil - S.t < 2) && k("seal-of-fury")) return "seal-of-fury";
+    if (known("holy-shield") && S.holyShieldUntil - S.t < 1 && k("holy-shield")) return "holy-shield";
+    if (k("judgement")) return "judgement";
+    if (k("holy-strike")) return "holy-strike";
+    if (S.boss.adds && k("hammer-of-the-righteous")) return "hammer-of-the-righteous";
+    if (k("consecration")) return "consecration";
+    return null;
+  }
+  if (sp === "ret") {
+    const seal = known("seal-of-command") ? "seal-of-command" : "seal-of-righteousness";
+    if ((!S.seal || S.sealUntil - S.t < 2) && k(seal)) return seal;
+    if (S.boss.hp < .2 && k("hammer-of-wrath")) return "hammer-of-wrath";
+    if (k("judgement")) return "judgement";
+    if (k("holy-strike")) return "holy-strike";
+    if (S.boss.undead && k("exorcism")) return "exorcism";
+    if (S.boss.adds && k("hammer-of-the-righteous")) return "hammer-of-the-righteous";
+    if (S.boss.adds && k("consecration")) return "consecration";
+    return null;
+  }
+  return null;
+}
+const ROTATION = { prot: ["righteous-fury", "seal-of-fury", "holy-shield", "judgement", "holy-strike", "hammer-of-the-righteous", "consecration"],
+  ret: ["seal-of-command", "seal-of-righteousness", "hammer-of-wrath", "judgement", "holy-strike", "exorcism", "hammer-of-the-righteous", "consecration", "seal-of-the-crusader"] };
+
+// --- input ---
+function sigFromKey(e) { const n = CODE_NAME(e.code); return n ? "key:" + n : null; }
+function layerFromMods(m) { return m.ctrl ? "Ctrl" : m.alt ? "Alt" : m.shift ? "Shift" : ""; }
+function sigToKeyId(sig, mods) {
+  let base = sigMap[sig];
+  if (!base) { if (!sig.startsWith("key:")) return null; base = sig.slice(4); }
+  return keyId(base, layerFromMods(mods));
+}
+function onArenaKey(e) {
+  if (!S || S.done) return;
+  if (e.key === "Escape") { e.preventDefault(); togglePause(); return; }
+  if (learning) return;
+  e.preventDefault();
+  if (S.paused || e.repeat) return;
+  if (["Shift", "Control", "Alt", "Meta"].includes(e.key)) return;
+  const sig = sigFromKey(e); if (!sig) return;
+  const mods = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey };
+  const base = sigMap[sig] || sig.slice(4);
+  if (MOVE_KEYS.has(base) && !sigMap[sig]) return;
+  press(sigToKeyId(sig, mods), "key", mods);
+}
+let lastWheel = 0;
+function onArenaWheel(e) {
+  if (!S || S.done || learning) return;
+  e.preventDefault();
+  if (S.paused) return;
+  const now = performance.now(); if (now - lastWheel < 180) return; lastWheel = now;
+  const sig = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? (e.deltaX < 0 ? "wheel:left" : "wheel:right") : (e.deltaY < 0 ? "wheel:up" : "wheel:down");
+  const mods = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey };
+  const k = sigToKeyId(sig, mods); if (k) press(k, "mouse", mods);
+}
+function onArenaMouse(e) {
+  if (!S || S.done || learning || S.paused) return;
+  if (e.button === 0 || e.button === 2) return;
+  e.preventDefault();
+  const mods = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey };
+  const k = sigToKeyId("mouse:" + e.button, mods); if (k) press(k, "mouse", mods);
+}
+$("#arena").addEventListener("keydown", onArenaKey);
+$("#arena").addEventListener("wheel", onArenaWheel, { passive: false });
+$("#arena").addEventListener("mousedown", onArenaMouse);
+$("#arena").addEventListener("auxclick", e => e.preventDefault());
+$("#arena").addEventListener("contextmenu", e => e.preventDefault());
+window.addEventListener("blur", () => { if (S && !S.done && !S.paused) togglePause(); });
+
+function press(k, src, mods) {
+  if (!S || S.done || S.paused) return;
+  mods = mods || { shift: k.startsWith("Shift-"), ctrl: k.startsWith("Ctrl-"), alt: k.startsWith("Alt-") };
+  S.presses++;
+  const ks = keyStat(k); ks.presses++;
+  const v = L().binds[k];
+  if (!v) { ks.unbound++; S.fumbles++; ks.fumbles++; logLine(`${keyLabel(k)}: nothing bound`, "bad"); if (S.event) S.event.wrong++; return; }
+  const a = resolve(v, S.spec);
+  if (!a) { ks.fumbles++; S.fumbles++; logLine(`${keyLabel(k)}: ${byId[v].name} is empty in ${SPEC_NAME[S.spec]}`, "bad"); return; }
+  let fx = a.kind === "macro" ? (MACRO_FX[a.id] ? MACRO_FX[a.id](mods) : primaryOf(a)) : a.id;
+  const target = a.kind === "macro" && MOUSEOVER.has(a.id) ? (S.hover ?? S.sel) : S.sel;
+  const cast = fx.split("+");
+  let ok = false;
+  cast.forEach(id => { if (id === "stopcast") { if (S.cast) { S.cast = null; renderCast(); } return; } if (id === "noop") return; ok = useAbility(id, k, target, a) || ok; });
+  flashSlot(k, ok);
+}
+// returns true if the press did something useful
+function useAbility(id, k, target, a) {
+  const baseId = id === "holy-light-low" ? "holy-light" : id;
+  const name = byId[baseId]?.name || baseId;
+  const st = stat(baseId); st.presses++; st.keys.add(k);
+  if (!known(baseId) && !["start-attack", "target-self", "target-party", "target-nearest", "assist", "healthstone", "health-potion", "mana-potion", "trinket-1", "trinket-2", "stopcasting", "stoneform"].includes(baseId)) {
+    logLine(`${keyLabel(k)}: ${name} isn't learned at level ${S.level} / in this spec`, "meh"); return false;
+  }
+  const info = simInfo(baseId);
+  // event check first: answering a prompt is what we measure
+  const ev = S.event;
+  const answers = ev && ev.def.accept.includes(baseId);
+  if (S.cast && info.gcd) { logLine(`${keyLabel(k)}: still casting ${S.cast.name}`, "meh"); return false; }
+  if (!ready(baseId)) { logLine(`${keyLabel(k)}: ${name} on cooldown (${cdLeft(baseId).toFixed(1)}s)`, "meh"); return false; }
+  if (info.gcd && S.gcdUntil > S.t + .12) { logLine(`${keyLabel(k)}: ${name} — global cooldown`, "meh"); return false; }
+  if (answers && ev.def.need && !ev.def.need(S)) { logLine(`${keyLabel(k)}: ${name} didn't taunt — Seal of Fury isn't up`, "bad"); ev.wrong++; st.fumbles++; S.fumbles++; keyStat(k).fumbles++; return false; }
+  // a wrong answer during an event (not part of a valid rotation) counts as a fumble
+  if (ev && !answers) {
+    const rot = (ROTATION[S.spec] || []).includes(baseId) || S.spec === "holy";
+    if (!rot || S.mode === "react") { ev.wrong++; S.fumbles++; keyStat(k).fumbles++; stat(ev.def.accept.find(x => known(x)) || ev.def.accept[0]).fumbles++; logLine(`${keyLabel(k)} → ${name}: not what this needs`, "bad"); return false; }
+  }
+  // spend
+  if (info.cd) S.cds[baseId] = S.t + (baseId === "holy-strike" && known("shieldsworn") ? 6 : info.cd);
+  if (baseId === "holy-shock" && S.vigil != null && target === S.vigil) S.cds[baseId] = S.t;
+  if (info.gcd) { S.gcdUntil = S.t + 1.5; S.gcdsUsed++; }
+  if (answers) { resolveEvent(baseId, k); }
+  const doIt = () => applyEffect(id, target, k);
+  if (info.cast && S.mode === "fight") { S.cast = { id, name, start: S.t, end: S.t + info.cast, target, k, done: doIt }; renderCast(); }
+  else doIt();
+  if (!answers && S.mode === "fight" && S.spec !== "holy") {
+    const best = nextBest.cachedBefore;
+    if ((ROTATION[S.spec] || []).includes(baseId)) { S.score += 6; if (best === baseId) { S.score += 4; S.perfect++; } }
+  }
+  if (!answers && S.mode === "fight") logLine(`${keyLabel(k)} → ${name}${target != null && S.party && ["heal", "dispel"].includes(byId[baseId]?.category) ? " on " + S.party[target]?.name : ""}`, "good");
+  return true;
+}
+function renderCast() {
+  const c = $("#aCast"); c.replaceChildren();
+  if (!S.cast) return;
+  c.append(el("div", { class: "bar cast" }, el("i", { id: "castBar", style: "width:0%" }), el("span", { text: `Casting ${S.cast.name}${S.party && S.cast.target != null ? " → " + S.party[S.cast.target].name : ""}` })));
+}
+
+// --- effects ---
+const HEAL = { "flash-of-light": .14, "holy-light": .42, "holy-light-low": .24, "holy-shock": .18, "lay-on-hands": 1 };
+const MANA = { "flash-of-light": .025, "holy-light": .085, "holy-light-low": .045, "holy-shock": .05, cleanse: .02, purify: .02, "lights-vigil": .1, "oath-of-light": .03, "blessing-of-protection": .02, "blessing-of-sacrifice": .02, consecration: .06, exorcism: .04, "holy-wrath": .07, "hammer-of-wrath": .04, judgement: .02, "divine-favor": .01 };
+function applyEffect(id, target, k) {
+  const sp = S.spec;
+  if (MANA[id]) S.mana = Math.max(0, S.mana - MANA[id] * (S.spec === "holy" ? 1 : .5));
+  if (id.startsWith("seal-of-")) { S.seal = id; S.sealUntil = S.t + 30; return; }
+  switch (id) {
+    case "righteous-fury": S.rf = true; return;
+    case "holy-shield": S.holyShieldUntil = S.t + 10; return;
+    case "divine-favor": S.favor = true; return;
+    case "mana-potion": S.mana = Math.min(1, S.mana + .3); return;
+    case "stoneform": if (S.party) S.party[4].dot = S.party[4].dot === "magic" ? "magic" : null; return;
+    case "target-self": S.sel = 4; markFrames(); return;
+  }
+  if (S.party) {
+    const p = S.party[target ?? 4];
+    if (!p || p.dead) { if (HEAL[id] || id === "cleanse") logLine("Target is dead", "bad"); return; }
+    if (HEAL[id] != null) {
+      let amt = HEAL[id] * (S.oath === target ? 1.3 : 1) * (S.favor ? 1.5 : 1);
+      if (S.favor && ["flash-of-light", "holy-light", "holy-light-low", "holy-shock"].includes(id)) S.favor = false;
+      const before = p.hp; p.hp = Math.min(1, p.hp + amt);
+      const eff = p.hp - before; S.healDone += eff; S.overheal += amt - eff;
+      if (id === "holy-shock" && S.vigil === target) { S.party.forEach(q => { if (!q.dead) { const b = q.hp; q.hp = Math.min(1, q.hp + .1); S.healDone += q.hp - b; } }); S.vigil = null; logLine("Light's Vigil burst heals the party", "good"); }
+      return;
+    }
+    if (id === "cleanse" || id === "purify") { if (p.dot) { if (id === "purify" && p.dot === "magic") { logLine("Purify can't remove magic", "meh"); return; } p.dot = null; S.score += 4; } return; }
+    if (id === "lights-vigil") { S.vigil = target; return; }
+    if (id === "oath-of-light") { S.oath = target; return; }
+    if (id === "blessing-of-protection") { S.bopUntil[target] = S.t + 6; return; }
+  } else {
+    // prot / ret: chip the boss
+    const dmg = { "holy-strike": .012, judgement: .01, "hammer-of-the-righteous": .012, consecration: .01, exorcism: .015, "hammer-of-wrath": .02, "holy-wrath": .012, "holy-shock": .01 }[id] || 0;
+    if (dmg) S.boss.hp = Math.max(0, S.boss.hp - dmg * (S.boss.adds && ["consecration", "hammer-of-the-righteous", "holy-wrath"].includes(id) ? 1.5 : 1));
+    if (["consecration", "hammer-of-the-righteous", "holy-wrath"].includes(id) && S.boss.adds) S.boss.adds = Math.max(0, S.boss.adds - 1);
+  }
+}
+
+// --- events ---
+function eligibleEvents() {
+  return EVENTS.filter(ev => ev.specs.includes(S.spec) && ev.accept.some(id => byId[id] && known(id)) && ev.accept.some(id => known(id) && (ready(id) || !S.realCd)))
+    ;
+}
+function spawnEvent() {
+  const list = eligibleEvents(); if (!list.length) return;
+  const def = list[Math.floor(Math.random() * list.length)];
+  const window = (S.mode === "react" ? 3.2 : 4) / S.pace;
+  S.event = { def, start: S.t, end: S.t + window, wrong: 0 };
+  def.accept.forEach(id => { if (known(id)) stat(id); });
+  const keyHints = def.accept.filter(id => known(id)).map(id => { const ks = keysForSpell(id); return ks.length ? `${byId[id].name}: ${ks.map(keyLabel).join(" / ")}` : `${byId[id].name}: unbound`; });
+  $("#aPrompt").hidden = false; $("#aPromptKind").textContent = def.kind; $("#aPromptText").textContent = def.text;
+  $("#aPromptHint").textContent = S.hints ? keyHints.join(" · ") : "Hints off";
+  if (def.id === "undead") S.boss.undead = true;
+  if (def.id === "lowhp" && S.party) S.party[4].hp = Math.min(S.party[4].hp, .18);
+  if (def.id === "poison" && S.party) S.party[4].dot = "poison";
+}
+function keysForSpell(id) {
+  const ks = [];
+  for (const [k, v] of Object.entries(L().binds)) { const a = resolve(v, S.spec); if (!a) continue; if (fxIds(a).includes(id) || (a.kind === "macro" && MACRO_FX[a.id] && [MACRO_FX[a.id]({ shift: k.startsWith("Shift") }), MACRO_FX[a.id]({ shift: true })].some(f => f.split("+").includes(id)))) ks.push(k); }
+  return [...new Set(ks)];
+}
+function resolveEvent(id, k) {
+  const ev = S.event; const rt = S.t - ev.start;
+  ev.def.accept.forEach(x => { if (S.stats[x]) S.stats[x].prompts += x === id ? 1 : 0; });
+  const st = stat(id); st.hits++; st.rts.push(rt); if (!st.prompts) st.prompts = 1;
+  S.score += Math.max(5, Math.round(30 - rt * 10));
+  logLine(`${ev.def.kind}: ${keyLabel(k)} → ${byId[id].name} in ${rt.toFixed(2)}s`, "good");
+  S.evLog.push({ ev: ev.def.id, ok: true, rt, id, k, wrong: ev.wrong });
+  S.event = null; $("#aPrompt").hidden = true;
+  S.nextEvent = S.t + (S.mode === "react" ? 1.2 + Math.random() * 1.3 : 5 + Math.random() * 6) / S.pace;
+}
+function failEvent() {
+  const ev = S.event;
+  const opts = ev.def.accept.filter(x => known(x));
+  const main = opts.find(x => keysForSpell(x).length) || opts[0];
+  if (main) { const st = stat(main); st.prompts++; }
+  const unbound = !opts.some(x => keysForSpell(x).length);
+  S.evLog.push({ ev: ev.def.id, ok: false, id: main, unbound, wrong: ev.wrong });
+  logLine(`${ev.def.kind}: missed${unbound ? " — no key bound for " + opts.map(x => byId[x].name).join(" / ") : ""}`, "bad");
+  if (ev.def.id === "lowhp" && S.party) { S.party[4].hp = Math.max(0, S.party[4].hp - .1); }
+  S.event = null; $("#aPrompt").hidden = true;
+  S.nextEvent = S.t + (S.mode === "react" ? 1.2 : 5 + Math.random() * 5) / S.pace;
+}
+
+// --- main loop ---
+function tick(now) {
+  if (!S || S.done) return;
+  const dt = Math.min(.1, (now - S.last) / 1000); S.last = now;
+  if (!S.paused) {
+    S.t += dt;
+    if (!S.evLog) S.evLog = [];
+    // cast completion
+    if (S.cast) { const p = (S.t - S.cast.start) / (S.cast.end - S.cast.start); const cb = $("#castBar"); if (cb) cb.style.width = Math.min(100, p * 100) + "%";
+      if (S.t >= S.cast.end) { const c = S.cast; S.cast = null; renderCast(); c.done(); } }
+    // events
+    if (S.event && S.t >= S.event.end) failEvent();
+    if (S.event) $("#aPromptBar").style.width = Math.max(0, 100 * (S.event.end - S.t) / (S.event.end - S.event.start)) + "%";
+    if (!S.event && S.t >= S.nextEvent) spawnEvent();
+    if (S.mode === "fight") fightStep(dt);
+    // idle GCDs for rotation specs
+    if (S.mode === "fight" && S.spec !== "holy" && !S.cast) { const nb = nextBest(); nextBest.cachedBefore = nb; if (nb && S.gcdUntil <= S.t) S.idle += dt; }
+    if (S.t >= S.dur) { endRun(); return; }
+    const left = Math.max(0, S.dur - S.t);
+    $("#aTimer").textContent = `${Math.floor(left / 60)}:${String(Math.floor(left % 60)).padStart(2, "0")}`;
+    const evs = S.evLog.length; const hits = S.evLog.filter(x => x.ok).length;
+    $("#aScore").textContent = `Score ${S.score} · events ${hits}/${evs} · fumbles ${S.fumbles}` + (S.spec !== "holy" && S.mode === "fight" ? ` · idle ${S.idle.toFixed(1)}s` : "") + (S.party ? ` · deaths ${S.deaths}` : "");
+    updateEnc(); updateBar();
+  }
+  requestAnimationFrame(tick);
+}
+function fightStep(dt) {
+  const T = S.timers, pace = S.pace;
+  if (S.spec === "holy") {
+    S.mana = Math.min(1, S.mana + dt * .006);
+    const hit = (i, amt) => { const p = S.party[i]; if (p.dead) return; if ((S.bopUntil[i] || 0) > S.t) amt *= .2; p.hp -= amt; if (p.hp <= 0) { p.hp = 0; p.dead = true; S.deaths++; S.score -= 25; logLine(`${p.name} died`, "bad"); } };
+    T.tank -= dt; if (T.tank <= 0) { hit(0, (.04 + Math.random() * .05) * pace); T.tank = 1.5; }
+    T.rand -= dt; if (T.rand <= 0) { hit(1 + Math.floor(Math.random() * 4), (.08 + Math.random() * .14) * pace); T.rand = 3 + Math.random() * 3; }
+    T.spike -= dt; if (T.spike <= 0) { hit(0, .3 * pace); logLine("Boss crushes the tank!", "meh"); T.spike = 10 + Math.random() * 6; }
+    T.aoe -= dt; if (T.aoe <= 0) { S.party.forEach((_, i) => hit(i, (.12 + Math.random() * .06) * pace)); logLine("Fire nova hits everyone", "meh"); T.aoe = 16 + Math.random() * 8; }
+    T.debuff -= dt; if (T.debuff <= 0) { const i = Math.floor(Math.random() * 5); if (!S.party[i].dead) S.party[i].dot = ["poison", "disease", "magic"][Math.floor(Math.random() * 3)]; T.debuff = 9 + Math.random() * 6; }
+    S.party.forEach((p, i) => { if (p.dot && !p.dead) hit(i, dt * .018 * pace); });
+  } else {
+    S.boss.hp = Math.max(0, S.boss.hp - dt * (.85 / S.dur));
+    T.adds -= dt; if (T.adds <= 0) { S.boss.adds = 2 + Math.floor(Math.random() * 2); logLine(`${S.boss.adds} adds join the fight`, "meh"); T.adds = 18 + Math.random() * 10; }
+    T.phase += dt; if (T.phase > 30) { S.boss.undead = !S.boss.undead; T.phase = 0; logLine(S.boss.undead ? "The boss rises as undead!" : "The boss is mortal again", "meh"); }
+  }
+}
+function togglePause() {
+  if (!S || S.done) return;
+  S.paused = !S.paused; $("#aPaused").hidden = !S.paused;
+  if (!S.paused) { S.last = performance.now(); $("#arena").focus({ preventScroll: true }); }
+}
+$("#aPause").addEventListener("click", togglePause);
+$("#aResume").addEventListener("click", togglePause);
+$("#aStop").addEventListener("click", () => endRun(true));
+$("#aStop2").addEventListener("click", () => endRun(true));
+$("#arena").addEventListener("pointerdown", () => { if (S && !S.paused) $("#arena").focus({ preventScroll: true }); });
+
+// --- results ---
+function endRun(early) {
+  if (!S || S.done) return;
+  S.done = true; $("#arena").hidden = true;
+  const evs = S.evLog || [];
+  const hits = evs.filter(x => x.ok); const rts = hits.map(x => x.rt);
+  const avgRt = rts.length ? rts.reduce((a, b) => a + b, 0) / rts.length : 0;
+  const run = { at: Date.now(), layout: store.current, spec: S.spec, mode: S.mode, dur: Math.round(S.t), events: evs.length, hits: hits.length, avgRt: +avgRt.toFixed(3), fumbles: S.fumbles, score: S.score, idle: +S.idle.toFixed(1), deaths: S.deaths };
+  if (S.t > 15) { store.runs = [...(store.runs || []), run].slice(-30); changed(); }
+  renderResults(run, early);
+  location.hash = "#practice";
+  $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function renderResults(run, early) {
+  const r = $("#results"); r.hidden = false; r.replaceChildren();
+  r.append(el("div", { class: "panel-head" }, el("h2", { text: early ? "Run ended early" : "Run complete" }), el("span", { class: "muted", text: `${SPEC_NAME[run.spec]} · ${MODES[run.mode].name} · ${run.dur}s · layout “${run.layout}”` })));
+  const tiles = [[`${run.hits}/${run.events}`, "events answered"], [run.avgRt ? run.avgRt.toFixed(2) + "s" : "—", "average reaction"], [String(run.fumbles), "fumbled presses"], [String(run.score), "score"]];
+  if (run.spec !== "holy" && run.mode === "fight") tiles.push([run.idle + "s", "idle with a button ready"]);
+  if (S.party) tiles.push([String(run.deaths), "party deaths"], [S.healDone + S.overheal ? Math.round(100 * S.overheal / (S.healDone + S.overheal)) + "%" : "—", "overhealing"]);
+  r.append(el("div", { class: "stat-row" }, tiles.map(([b, s]) => el("div", {}, el("b", { text: b }), el("span", { text: s })))));
+  // per ability
+  const rows = Object.entries(S.stats).filter(([, s]) => s.prompts || s.fumbles).map(([id, s]) => ({ id, ...s, avg: s.rts.length ? s.rts.reduce((a, b) => a + b, 0) / s.rts.length : null }))
+    .sort((a, b) => (b.avg ?? 9) - (a.avg ?? 9));
+  if (rows.length) {
+    const t = el("table", { class: "tbl" }, el("tr", {}, el("th", { text: "Ability" }), el("th", { text: "Your key" }), el("th", { class: "n", text: "Answered" }), el("th", { class: "n", text: "Avg time" }), el("th", { class: "n", text: "Fumbles" })));
+    rows.forEach(x => { const ks = keysForSpell(x.id);
+      t.append(el("tr", {}, el("td", { text: byId[x.id]?.name || x.id }), el("td", { class: "mono", text: ks.length ? ks.map(keyLabel).join(", ") : "unbound" }),
+        el("td", { class: "n", text: `${x.hits}/${Math.max(x.prompts, x.hits)}` }), el("td", { class: "n" + (x.avg > 1.3 ? " bad" : ""), text: x.avg != null ? x.avg.toFixed(2) + "s" : "—" }), el("td", { class: "n" + (x.fumbles ? " bad" : ""), text: String(x.fumbles) }))); });
+    r.append(el("h3", { style: "margin-top:8px", text: "How each answer went" }), el("div", { class: "scroll-x" }, t));
+  }
+  // per key fumbles
+  const kf = Object.entries(S.keyStats).filter(([, s]) => s.fumbles).sort((a, b) => b[1].fumbles - a[1].fumbles);
+  // suggestions
+  const free = ["1", "2", "3", "4", "Q", "E", "R", "F", "5", "T", "G", "Z", "X", "C", "V", "M-S1", "M-S2", "M-S3", "M-S4", "M-S5", "M-S6"].filter(k => !L().binds[k]);
+  const sug = [];
+  rows.forEach(x => {
+    const ks = keysForSpell(x.id), name = byId[x.id]?.name || x.id;
+    if (!ks.length && x.prompts) sug.push(`${name} has no key in ${SPEC_NAME[run.spec]}. Bind it${free.length ? " — free easy keys: " + free.slice(0, 4).map(keyLabel).join(", ") : ""}.`);
+    else if (x.avg > 1.3 || (x.prompts && x.hits / x.prompts < .67)) {
+      const tier = ks.length ? tierOfKey(ks[0]) : "far";
+      sug.push(`${name} on ${ks.map(keyLabel).join(", ")} was slow or missed (${x.avg ? x.avg.toFixed(2) + "s" : "missed"}, ${tier} reach). ${tier === "best" ? "Reach is fine: practise it a few more runs before moving it." : "Try moving it to an easier key" + (free.length ? ", e.g. " + free.slice(0, 3).map(keyLabel).join(", ") : "") + "."}`);
+    }
+  });
+  kf.slice(0, 3).forEach(([k, s]) => { if (s.unbound >= 2) sug.push(`You pressed ${keyLabel(k)} ${s.unbound}× with nothing on it. Your hand expects something there: consider binding it.`); else if (s.fumbles >= 2) sug.push(`${keyLabel(k)} was the wrong key ${s.fumbles}×. What's on it may be easy to confuse with a neighbour.`); });
+  if (run.idle > run.dur * .15) sug.push(`You sat idle for ${run.idle}s with an ability ready. With hints on, watch for the gold-glowing slot to learn the priority.`);
+  r.append(el("h3", { style: "margin-top:12px", text: "Suggestions" }), sug.length ? el("ul", { class: "sugg" }, sug.slice(0, 6).map(s => el("li", { text: s }))) : el("p", { class: "ok", text: "No problem keys this run. Turn hints off or raise the pace to push harder." }));
+  r.append(el("div", { class: "btn-row" }, el("button", { class: "btn primary", type: "button", text: "Run again", onclick: () => startRun() }), el("a", { class: "btn", href: "#plan", text: "Adjust binds" })));
+  renderHistory();
+}
+
+// ================= persistence =================
 let docRef = null, saveT = null, writing = false, pending = false, lastJson = "";
 function setSave(s, t) { $("#saveState").dataset.s = s; $("#saveText").textContent = t; }
 function changed() {
@@ -668,14 +1408,15 @@ async function flush() {
   const json = JSON.stringify(store);
   if (json === lastJson) { setSave("saved", "Saved to your account"); return; }
   writing = true;
-  try { await docRef.set({ v: 1, store: JSON.parse(json) }); lastJson = json; setSave("saved", "Saved to your account"); }
+  try { await docRef.set({ v: 2, store: JSON.parse(json) }); lastJson = json; setSave("saved", "Saved to your account"); }
   catch (e) { setSave("local", e?.code === "quota_exceeded" ? "Account storage is full: saved in this browser" : "Couldn't reach your account: saved in this browser"); }
   writing = false;
   if (pending) { pending = false; flush(); }
 }
 function validStore(s) { return s && typeof s === "object" && s.layouts && typeof s.layouts === "object" && Object.keys(s.layouts).length && s.layouts[s.current]; }
-try { const s = JSON.parse(localStorage.getItem("lk-store") || "null"); if (validStore(s)) store = s; } catch (e) {}
-render();
+function adopt(s) { store = s; if (!Array.isArray(store.runs)) store.runs = []; }
+try { const s = JSON.parse(localStorage.getItem("lk-store") || "null"); if (validStore(s)) adopt(s); } catch (e) {}
+route();
 setSave("local", "Saved in this browser only");
 
 (async () => {
@@ -695,14 +1436,11 @@ setSave("local", "Saved in this browser only");
     const d = snap.exists ? snap.data() : null;
     if (d && validStore(d.store)) {
       const json = JSON.stringify(d.store);
-      if (json !== JSON.stringify(store)) { store = JSON.parse(json); render(); }
+      if (json !== JSON.stringify(store)) { adopt(JSON.parse(json)); if (!S || S.done) render(); }
       lastJson = json; setSave("saved", "Saved to your account");
-    } else if (first && !snap.metadata.fromCache) {
-      // first visit with an account: push whatever this browser has
-      flush();
-    }
+    } else if (first && !snap.metadata.fromCache) flush();
     if (!snap.metadata.fromCache) first = false;
-  }, err => { clearTimeout(timer); docRef = null; setSave("local", "Saved in this browser only"); });
+  }, () => { clearTimeout(timer); docRef = null; setSave("local", "Saved in this browser only"); });
 })();
 })();
 </script>
